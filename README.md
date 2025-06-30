@@ -13,6 +13,28 @@ This is the backend API for the Event Ticketing & Venue Booking Management Syste
 - **Neon** –  A fully managed, serverless PostgreSQL database.
 
 
+
+##  Database Schema 
+
+### Users Table
+- `user_id`, `firstname`, `lastname`, `email`, `password`, `contact_phone`, `address`, `role`, `created_at`, `updated_at`
+
+### Events Table
+- `event_id`, `title`, `description`, `venue_id`, `category`, `date`, `time`, `ticket_price`, `tickets_total`, `tickets_sold`
+
+### Venues Table
+- `venue_id`, `name`, `address`, `capacity`
+
+### Bookings Table
+- `booking_id`, `user_id`, `event_id`, `quantity`, `total_amount`, `booking_status`
+
+### Payments Table
+- `payment_id`, `booking_id`, `amount`, `payment_status`, `payment_date`, `payment_method`, `transaction_id`
+
+### Support Tickets Table
+- `ticket_id`, `user_id`, `subject`, `description`, `status`
+
+
 ## 📂 Project Structure
 ```
   src/
@@ -26,3 +48,4 @@ This is the backend API for the Event Ticketing & Venue Booking Management Syste
 │ ├── bearAuth.ts #
 └── server.ts
 ```
+
