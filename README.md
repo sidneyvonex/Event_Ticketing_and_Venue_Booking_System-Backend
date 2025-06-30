@@ -37,15 +37,31 @@ This is the backend API for the Event Ticketing & Venue Booking Management Syste
 
 ## 📂 Project Structure
 ```
-  src/
-├── drizzle/
-│ ├── schema.ts # Drizzle ORM schema
-│ ├── seed.ts #adding Initial Data
-│ └── db.ts # DB connection logic
-├── middleware/
-│ ├── logger.ts #logging the requests
-│ ├── limiter.ts #limits the n.o of requests per minute
-│ ├── bearAuth.ts #
-└── server.ts
+
+|root
+|── src/
+|── ├── drizzle/
+|── │ ├── schema.ts # Drizzle ORM schema
+|── │ ├── seed.ts #adding Initial Data
+|── │ └── db.ts # DB connection logic
+|── ├── middleware/
+|── │ ├── logger.ts #logging the requests
+|── │ ├── limiter.ts #limits the n.o of requests per minute
+|── │ ├── bearAuth.ts 
+|── ├── User/
+|── │ ├── user.service.ts
+|── │ ├── user.controller.ts
+|── │ ├── user.route.ts
+|── ├── Venue/
+|── │ ├── venue.service.ts
+|── │ ├── venue.controller.ts
+|── │ ├── venue.route.ts
+|── └── server.ts
+|──.env
+|── package.json
+|──.gitignore
+|── drizzle.config.ts
+|── pnpm-lock-yaml
+|── tsconfig.json
 ```
 
