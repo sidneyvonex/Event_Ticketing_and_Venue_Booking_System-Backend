@@ -1,0 +1,1 @@
+ALTER TABLE "userTable" ADD COLUMN "emailVerified" integer DEFAULT 0 NOT NULL;

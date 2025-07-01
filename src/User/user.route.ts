@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createUser, deleteUser, getUserById, getUsers, updateUser } from "./user.controller";
+import { adminRoleAuth } from "../Middleware/bearAuth";
 
  
 export const userRouter = Router();
@@ -8,7 +9,7 @@ export const userRouter = Router();
  
  
 // Get all users
-userRouter.get('/users', getUsers);
+userRouter.get('/users',adminRoleAuth, getUsers);
  
 // Get user by ID
 userRouter.get('/users/:id', getUserById);
