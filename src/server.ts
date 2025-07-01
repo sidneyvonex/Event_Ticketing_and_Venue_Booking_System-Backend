@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 
 //importing routes
 import { userRouter } from './User/user.route';
+import { authRouter } from './Auth/auth.router';
 
 
 dotenv.config(); // Load environment variables from .env file
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 
 
 app.use('/api', userRouter); // User routes
+app.use('/api', authRouter); // Auth routes (if needed, can be separated later)
 
 
 

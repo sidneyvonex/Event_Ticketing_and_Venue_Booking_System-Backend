@@ -38,7 +38,7 @@ This is the backend API for the Event Ticketing & Venue Booking Management Syste
 ## 📂 Project Structure
 ```
 
-|root
+|root/
 |── src/
 |── ├── Auth/
 |── │ ├── auth.controller.ts
