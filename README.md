@@ -38,62 +38,74 @@ This is the backend API for the Event Ticketing & Venue Booking Management Syste
 ## 📂 Project Structure
 ```
 
-|root/
-|── src/
-|── ├── Auth/
-|── │ ├── auth.controller.ts
-|── │ ├── auth.service.ts
-|── │ └── auth.route.ts
-|── ├── Bookings/
-|── │ ├── bookings.controller.ts
-|── │ ├── bookings.service.ts
-|── │ └── bookings.route.ts
-|── ├── drizzle/
-|── │ ├── schema.ts # Drizzle ORM schema
-|── │ ├── seed.ts #adding Initial Data
-|── │ └── db.ts # DB connection logic
-|── ├── middleware/
-|── │ ├── logger.ts #logging the requests
-|── │ ├── limiter.ts #limits the n.o of requests per minute
-|── │ ├── bearAuth.ts 
-|── ├── Payments/
-|── │ ├── payments.controller.ts
-|── │ ├── payments.service.ts
-|── │ └── payments.route.ts
-|── ├── Support Tickets/
-|── │ ├── supportTickets.controller.ts
-|── │ ├── supportTickets.service.ts
-|── │ └── supportTickets.route.ts
-|── ├── User/
-|── │ ├── user.service.ts
-|── │ ├── user.controller.ts
-|── │ ├── user.route.ts
-|── ├── Validation/
-|── │ ├── user.validation.ts
-|── │ ├── events.validation.ts
-|── │ ├── venue.validation.ts
-|── │ ├── bookings.validation.ts
-|── │ ├── payments.validation.ts
-|── │ ├── supportTicket.validation.ts
-|── ├── Venue/
-|── │ ├── venue.service.ts
-|── │ ├── venue.controller.ts
-|── │ ├── venue.route.ts
-|── ├──server.ts
-|── ├── test/
-├── │  ├── auth.test.ts
-├── │  ├── events.test.ts
-├── │  ├── venue.test.ts
-├── │  ├── bookings.test.ts
-├── │  ├── payments.test.ts
-├── │  ├── supportTicket.test.ts
-├── │  ├── user.test.ts
-|──.env
-|── jest.config.ts
-|── package.json
-|──.gitignore
-|── drizzle.config.ts
-|── pnpm-lock-yaml
-|── tsconfig.json
+root/
+│
+├── src/
+│   ├── modules/               # All features grouped
+│   │   ├── auth/
+│   │   │   ├── controller.ts
+│   │   │   ├── service.ts
+│   │   │   ├── route.ts
+│   │
+│   │   ├── bookings/
+│   │   │   ├── controller.ts
+│   │   │   ├── service.ts
+│   │   │   ├── route.ts
+│   │
+│   │   ├── payments/
+│   │   │   ├── controller.ts
+│   │   │   ├── service.ts
+│   │   │   ├── route.ts
+│   │
+│   │   ├── support/
+│   │   │   ├── controller.ts
+│   │   │   ├── service.ts
+│   │   │   ├── route.ts
+│   │
+│   │   ├── user/
+│   │   │   ├── controller.ts
+│   │   │   ├── service.ts
+│   │   │   ├── route.ts
+│   │
+│   │   ├── venue/
+│   │   │   ├── controller.ts
+│   │   │   ├── service.ts
+│   │   │   ├── route.ts
+│
+│   ├── db/                    # Drizzle ORM and DB
+│   │   ├── schema.ts
+│   │   ├── seed.ts
+│   │   ├── db.ts
+│
+│   ├── middleware/
+│   │   ├── bearAuth.ts            
+│   │   ├── logger.ts
+│   │   ├── limiter.ts
+│
+│   ├── validation/
+│   │   ├── user.ts
+│   │   ├── bookings.ts
+│   │   ├── payments.ts
+│   │   ├── support.ts
+│   │   ├── venue.ts
+│
+│   ├── server.ts              # Entry point
+│
+├── test/
+│   ├── auth.test.ts
+│   ├── bookings.test.ts
+│   ├── payments.test.ts
+│   ├── support.test.ts
+│   ├── user.test.ts
+│   ├── venue.test.ts
+│
+├── .env
+├── drizzle.config.ts
+├── jest.config.ts
+├── package.json
+├── pnpm-lock.yaml
+├── tsconfig.json
+├── .gitignore
+
 ```
 

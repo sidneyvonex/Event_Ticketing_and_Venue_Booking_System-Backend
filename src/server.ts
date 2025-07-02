@@ -1,5 +1,6 @@
 import express, { Application } from 'express';
 import dotenv from 'dotenv';
+import { swaggerSetup } from './swagger';
 
 //importing routes
 import { userRouter } from './User/user.route';
@@ -14,7 +15,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+//sWagger setup
+swaggerSetup(app); // Initialize Swagger documentation
 
 // Routes
 app.get('/', (req, res) => {
