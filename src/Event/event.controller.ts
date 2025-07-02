@@ -41,7 +41,8 @@ export const createEvent = async (req: Request, res: Response) => {
         return; // Prevent further execution
     }
     try {
-        const newEvent = await createEventService({  eventTitle,description,venueId,category,eventDate,eventTime,ticketPrice,ticketsTotal,ticketsSold });
+        const eventDateObj = new Date(eventDate);
+        const newEvent = await createEventService({  eventTitle,description,venueId,category,eventDate: eventDateObj,eventTime,ticketPrice,ticketsTotal,ticketsSold });
         if (newEvent == null) {
             res.status(500).json({ message: "Failed to create Event" });
         } else {
@@ -64,7 +65,8 @@ export const updateEvent = async (req: Request, res: Response) => {
         return; // Prevent further execution
     }
     try {
-        const updateEvent = await updateEventService(eventId, { eventTitle,description,venueId,category,eventDate,eventTime,ticketPrice,ticketsTotal,ticketsSold});
+        const eventDateObj = new Date(eventDate);
+        const updateEvent = await updateEventService(eventId, { eventTitle,description,venueId,category,eventDate:eventDateObj,eventTime,ticketPrice,ticketsTotal,ticketsSold});
         if (updateEvent == null) {
             res.status(404).json({ message: "Event not found or failed to update" });
         } else {
