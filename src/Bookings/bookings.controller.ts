@@ -84,9 +84,9 @@ export const deleteBooking = async(req:Request,res:Response) =>{
         if(deletetedBooking){
             res.status(200).json({message:"Your Booking has been deleted successfully✅"})
         }else{
-            res.status(400).json({message:"Booking not found"})
+            res.status(404).json({message:"Booking not found"})
         }
     }catch(error:any){
-        res.status(500).json({error:error.message})
+        res.status(500).json({error:error.message || "Failedto delete Book"})
     }
 }
