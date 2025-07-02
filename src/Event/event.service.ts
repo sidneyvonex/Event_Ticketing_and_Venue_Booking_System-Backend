@@ -1,6 +1,6 @@
 
 import  db from "../drizzle/db";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { eventTable,TEventSelect,TEventInsert} from "../drizzle/schema";
 
 
@@ -9,7 +9,9 @@ import { eventTable,TEventSelect,TEventInsert} from "../drizzle/schema";
  
 //Get all Events
 export const getAllEventsService = async():Promise<TEventSelect[] | null> => {
-    return await  db.query.eventTable.findMany({});
+    return await  db.query.eventTable.findMany({
+        orderBy:[desc(eventTable.eventId)]
+    });
 }
 
 //Get Event by ID

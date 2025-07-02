@@ -1,6 +1,6 @@
 
 import  db from "../drizzle/db";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { userTable,TUserInsert,TUserSelect } from "../drizzle/schema";
 
 
@@ -9,7 +9,9 @@ import { userTable,TUserInsert,TUserSelect } from "../drizzle/schema";
  
 //Get all users
 export const getUsersServices = async():Promise<TUserSelect[] | null> => {
-    return await  db.query.userTable.findMany({});
+    return await  db.query.userTable.findMany({
+      orderBy:[desc(userTable.userId)]
+    });
 }
 
 //Get user by ID

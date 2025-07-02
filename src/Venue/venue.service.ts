@@ -1,6 +1,6 @@
 
 import  db from "../drizzle/db";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { venueTable,TVenueSelect,TVenueInsert } from "../drizzle/schema";
 
 
@@ -9,7 +9,9 @@ import { venueTable,TVenueSelect,TVenueInsert } from "../drizzle/schema";
  
 //Get all Venues
 export const getAllVenueServices = async():Promise<TVenueSelect[] | null> => {
-    return await  db.query.venueTable.findMany({});
+    return await  db.query.venueTable.findMany({
+        orderBy:[desc(venueTable.venueId)]
+    });
 }
 
 //Get venue by ID

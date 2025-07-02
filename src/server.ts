@@ -9,6 +9,7 @@ import { userRouter } from './User/user.route';
 import { authRouter } from './Auth/auth.router';
 import { venueRouter } from './Venue/venue.route';
 import { eventRouter } from './Event/event.route';
+import { bookingsRouter } from './Bookings/bookings.route';
 
 
 dotenv.config(); // Load environment variables from .env file
@@ -39,6 +40,8 @@ app.use('/api', userRouter); // User routes
 app.use('/api', authRouter); // Auth routes 
 app.use('/api',venueRouter); // Venue routes
 app.use('/api',eventRouter); // Event routes
+app.use('/api',bookingsRouter);//Bookings routes
+
 
 
 
