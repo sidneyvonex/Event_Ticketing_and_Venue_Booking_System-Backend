@@ -1,5 +1,7 @@
 import express, { Application } from 'express';
 import dotenv from 'dotenv';
+import { rateLimiterMiddleware } from './Middleware/limiter';
+import { logger } from './Middleware/logger';
 import { swaggerSetup } from './swagger';
 
 //importing routes
@@ -15,6 +17,12 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Rate Limiter Middleware
+app.use(rateLimiterMiddleware);
+
+//Logging Middleware
+app.use(logger);
+
 //sWagger setup
 swaggerSetup(app); // Initialize Swagger documentation
 
@@ -22,6 +30,7 @@ swaggerSetup(app); // Initialize Swagger documentation
 app.get('/', (req, res) => {
     res.send('Welcome to my Event Ticketing and Venue Booking System API');
 }); //Default route
+
 
 
 app.use('/api', userRouter); // User routes
