@@ -3,6 +3,9 @@ import {createPayment,updatePayment,deletePayment,getAllPayments,getPaymentById}
 
 
 export const paymentRouter = Router();
+/**
+ * @Swagger
+ */
 
 paymentRouter.get('/payments',getAllPayments);
 

@@ -34,7 +34,7 @@ export const updateEventService = async(eventId: number, event:TEventInsert):Pro
 }
 
 // Delete a Event
-export const deleteEventService = async(eventId: number):Promise<string> => {
-  await db.delete(eventTable).where(eq(eventTable.eventId,eventId));
-  return "Event Delete Sucessfully";
+export const deleteEventService = async(eventId: number):Promise<boolean> => {
+  const result = await db.delete(eventTable).where(eq(eventTable.eventId,eventId)).execute();
+  return result.rowCount > 0
 }

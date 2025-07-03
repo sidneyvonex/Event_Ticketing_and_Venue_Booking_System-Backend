@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { createUser, deleteUser, getUserById, getUsers, updateUser } from "./user.controller";
-import { adminRoleAuth,bothRoleAuth,memberRoleAuth } from "../Middleware/bearAuth";
+import { adminRoleAuth,bothRoleAuth } from "../Middleware/bearAuth";
 
 
 export const userRouter = Router();
@@ -56,7 +56,7 @@ userRouter.get('/users',adminRoleAuth, getUsers);
  */
  
 // Get user by ID
-userRouter.get('/users/:id',bothRoleAuth, getUserById);
+userRouter.get('/users/:id',adminRoleAuth, getUserById);
 //Swagger documentation for GET by ID
 /**
  * @swagger
@@ -84,7 +84,7 @@ userRouter.get('/users/:id',bothRoleAuth, getUserById);
 
 
 // Create a new user
-userRouter.post('/users',memberRoleAuth, createUser);
+userRouter.post('/users', createUser);
 
 
 // Update an existing user
