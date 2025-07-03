@@ -6,15 +6,19 @@ import {
   updateEvent,
   deleteEvent
 } from "./event.controller";
+import { adminRoleAuth, bothRoleAuth, memberRoleAuth } from "../Middleware/bearAuth";
 
 export const eventRouter = Router();
 
+eventRouter.get('/events',bothRoleAuth, getAllEvents);
 /**
  * @swagger
  * /events:
  *   get:
  *     summary: Get all Events
  *     description: Retrieves a list of all events
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Events]
  *     responses:
  *       200:
@@ -26,7 +30,8 @@ export const eventRouter = Router();
  *               items:
  *                 $ref: '#/components/schemas/events'
  */
-eventRouter.get('/events', getAllEvents);
+
+eventRouter.get('/events/:id',memberRoleAuth, getEventById);
 
 /**
  * @swagger
@@ -34,6 +39,8 @@ eventRouter.get('/events', getAllEvents);
  *   get:
  *     summary: Get an Event by Id
  *     description: Retrieves an event by its unique ID
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Events]
  *     parameters:
  *       - in: path
@@ -51,8 +58,9 @@ eventRouter.get('/events', getAllEvents);
  *               $ref: '#/components/schemas/events'
  *       404:
  *         description: Event not found
- */
-eventRouter.get('/events/:id', getEventById);
+*/
+
+eventRouter.post('/events',adminRoleAuth, createEvent);
 
 /**
  * @swagger
@@ -60,6 +68,8 @@ eventRouter.get('/events/:id', getEventById);
  *   post:
  *     summary: Adds an Event
  *     description: Used to insert a new event into the system
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Events]
  *     requestBody:
  *       required: true
@@ -71,7 +81,8 @@ eventRouter.get('/events/:id', getEventById);
  *       201:
  *         description: Event added successfully
  */
-eventRouter.post('/events', createEvent);
+
+eventRouter.put('/events/:id',adminRoleAuth, updateEvent);
 
 /**
  * @swagger
@@ -79,6 +90,8 @@ eventRouter.post('/events', createEvent);
  *   put:
  *     summary: Updates an Existing Event
  *     description: Used to update an event in the system
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Events]
  *     parameters:
  *       - in: path
@@ -92,16 +105,54 @@ eventRouter.post('/events', createEvent);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/events'
+ *             type: object
+ *             properties:
+ *               eventTitle:
+ *                 type: string
+ *                 example: "AI Summit 2025"
+ *               description:
+ *                 type: string
+ *                 example: "A major AI conference"
+ *               venueId:
+ *                 type: integer
+ *                 example: 3
+ *               category:
+ *                 type: string
+ *                 example: "Technology"
+ *               eventDate:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-08-10T10:00:00Z"
+ *               eventTime:
+ *                 type: string
+ *                 example: "14:00:00"
+ *               ticketPrice:
+ *                 type: number
+ *                 format: float
+ *                 example: 1000.00
+ *               ticketsTotal:
+ *                 type: integer
+ *                 example: 300
+ *               ticketsSold:
+ *                 type: integer
+ *                 example: 200
  *     responses:
  *       200:
  *         description: Event updated successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/events'
+ *               $ref: '#/components/schemas/Event'
+ *       400:
+ *         description: Invalid input data
+ *       404:
+ *         description: Event not found
+ *       500:
+ *         description: Internal server error
  */
-eventRouter.put('/events/:id', updateEvent);
+
+
+eventRouter.delete('/events/:id',adminRoleAuth, deleteEvent);
 
 /**
  * @swagger
@@ -109,6 +160,8 @@ eventRouter.put('/events/:id', updateEvent);
  *   delete:
  *     summary: Deletes an Existing Event
  *     description: Used to delete an event in the system
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Events]
  *     parameters:
  *       - in: path
@@ -120,32 +173,6 @@ eventRouter.put('/events/:id', updateEvent);
  *     responses:
  *       200:
  *         description: Event deleted successfully
- *       404:
- *         description: Event not found
- *       400:
- *         description: Invalid Event ID
- *       500:
- *         description: Internal server error
- */
-eventRouter.delete('/events/:id', deleteEvent);
-
-/**
- * @swagger
- * /events/{id}:
- *   delete:
- *     summary: Deletes an Existing Event
- *     description: Used to delete an event in the system
- *     tags: [Events]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Numeric ID of the event to Delete
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Event Deleted successfully
  *       404:
  *         description: Event not found
  *       400:

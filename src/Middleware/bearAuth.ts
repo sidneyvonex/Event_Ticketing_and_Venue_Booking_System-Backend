@@ -35,48 +35,41 @@ export const verifyToken =(token:string,secret:string) => {
 }
 
 //Authorization middleware
-export const authMiddleware = async(req:Request,res:Response,next:NextFunction,requiredRole:string) =>{
-    const token = req.header('Authorization'); // Get the Authorization header from the request
-    if(!token){
-        res.status(401).json({ error: " Authorization header is missing" });
-        return; // Prevent further execution
-    }
-
-    const decodedToken = verifyToken(token,process.env.JWT_SECRET as string); // Verify the token using the secret
-
-    if(!decodedToken){
-        res.status(401).json({ error: "Invalid token - Access denied." });
-        return; // Prevent further execution
-    }
-    const userType = decodedToken?.userRole; // Get the user role from the decoded token
-
-    if(requiredRole === "both" && (userType === "admin" || userType === "user")) {
-        // If the required role is both and the user is either an admin or a member
-        if(decodedToken?.userRole === "admin" || decodedToken?.userRole === "user"){
-            req.user = decodedToken; // Attach the decoded token to the request object
-            next(); // Call the next middleware or route handler
-            return; // Prevent further execution
-        }
-    } else if(requiredRole === "admin" && userType === "admin") {
-        // If the required role is admin and the user is an admin
-        req.user = decodedToken; // Attach the decoded token to the request object
-        next(); // Call the next middleware or route handler
-        return; // Prevent further execution
-    }else{
-        res.status(403).json({ error: "Access denied :  You do not have the required permissions." });
-        return; // Prevent further execution
-    }
-
-}
+export const authMiddleware = (requiredRole: 'admin' | 'user' | 'both') =>
+    (req: Request, res: Response, next: NextFunction) => {
+      const authHeader = req.header('Authorization');
+      if (!authHeader?.startsWith('Bearer ')) {
+         res.status(401).json({ error: "Authorization header is missing or malformed" });
+         return;
+      }
+  
+      const token = authHeader.split(' ')[1];
+      const decoded = verifyToken(token, process.env.JWT_SECRET!);
+      if (!decoded) {
+         res.status(401).json({ error: "Invalid token - Access denied." });
+         return;
+      }
+  
+      const role = decoded.userRole;
+      const isAllowed =
+        requiredRole === 'both' ? (role === 'admin' || role === 'user')
+        : requiredRole === 'admin' ? role === 'admin'
+        : requiredRole === 'user' ? role === 'user'
+        : false;
+  
+      if (!isAllowed) {
+        res.status(403).json({ error: "Access denied: You do not have the required permissions." });
+        return;
+      }
+  
+      req.user = decoded;
+      next();
+    };
+  
 
 
-//Middleware to check if the User is an Admin
-export const adminRoleAuth = async(req:Request,res:Response,next:NextFunction) =>{await authMiddleware(req,res,next,"admin")} 
+//Middleware to check if the User is an Admin || Member || Both
+export const adminRoleAuth  = authMiddleware('admin');
+export const memberRoleAuth = authMiddleware('user');
+export const bothRoleAuth   = authMiddleware('both');
 
-
-//Middleware to check if the User is an member/Normal User
-export const memberRoleAuth = async(req:Request,res:Response,next:NextFunction) =>{await authMiddleware(req,res,next,"user")} 
-
-
-//Middleware to check if the User is either an Admin or a Member
-export const bothRoleAuth = async(req:Request,res:Response,next:NextFunction) =>{await authMiddleware(req,res,next,"both")} 
