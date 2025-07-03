@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { getUsersServices, getUserByIdServices, createUserServices, updateUserServices, deleteUserServices } from "./user.service";
+import { userValidator } from "../Validation/user.validator";
 
 
 
@@ -37,12 +38,20 @@ export const getUserById = async (req: Request, res: Response) => {
 }
  
 export const createUser = async (req: Request, res: Response) => {
+    
+
     const { firstName,lastName,email,password,contactPhone,address } = req.body;
     if (!firstName||!lastName ||!email||!password||!contactPhone||!address) {
         res.status(400).json({ error: "All fields are required" });
         return; // Prevent further execution
     }
+
     try {
+        const parseResult = userValidator.safeParse(req.body)
+        if(!parseResult.success){
+            res.status(400).json({error:parseResult.error.issues})
+            return;
+        } 
         const newUser = await createUserServices({ firstName,lastName,email,password,contactPhone,address});
         if (newUser == null) {
             res.status(500).json({ message: "Failed to create user" });

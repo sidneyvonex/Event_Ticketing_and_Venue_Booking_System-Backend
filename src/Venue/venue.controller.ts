@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { getAllVenueServices,getVenueByIdService,updateVenueService,deleteVenueService,createVenueService } from "./venue.service";
+import { venueValidator } from "../Validation/venueValidator";
 
 
 
@@ -41,6 +42,11 @@ export const createVenue = async (req: Request, res: Response) => {
         return; // Prevent further execution
     }
     try {
+       const parseResult = venueValidator.safeParse(req.body)
+        if(!parseResult.success){
+            res.status(400).json({error:parseResult.error.issues})
+            return;
+        } 
         const newVenue = await createVenueService({ venueName,venueAddress,venueCapacity });
         if (newVenue == null) {
             res.status(500).json({ message: "Failed to create Venue" });
