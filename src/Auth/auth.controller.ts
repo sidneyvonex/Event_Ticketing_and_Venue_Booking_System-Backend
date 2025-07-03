@@ -6,12 +6,20 @@ import { createUserService, getUserByEmailService } from "./auth.services";
 export const createUser = async (req: Request, res: Response) => {
 
     try {
-        const { firstName,lastName,email,password,contactPhone,address } = req.body; //destructuring the request body
+        const { firstName,lastName,email,password,contactPhone,address,userRole } = req.body; //destructuring the request body
         if (!firstName||!lastName ||!email||!password||!contactPhone||!address) {
             res.status(400).json({ error: "All fields are required" });
             return; // Prevent further execution
     }
-    
+        
+    console.log(req.body)
+
+        const existingUser = await getUserByEmailService(email);
+        if (existingUser) {
+        res.status(409).json({ error: "Email already in use" });
+        return;
+}
+
     //generate hashed password
     
     const saltRounds = 12;
@@ -20,7 +28,9 @@ export const createUser = async (req: Request, res: Response) => {
 
     // console.log("🌟 ~ createUser ~ hashedPassword:", hashedPassword)
 
-    const newUser = await createUserService({firstName,lastName,email,password:hashedPassword,contactPhone,address,emailVerified:0,userRole:"user"}); // Call the service to create a new user
+
+
+    const newUser = await createUserService({firstName,lastName,email,password:hashedPassword,contactPhone,address,emailVerified:0,userRole}); // Call the service to create a new user
     res.status(201).json({ message: newUser }); // Respond with success message
 
     // console.log("🌟 ~ createUser ~ newUser:", newUser)

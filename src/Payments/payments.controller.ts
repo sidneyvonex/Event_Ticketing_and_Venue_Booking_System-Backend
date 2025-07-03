@@ -66,7 +66,7 @@ export const updatePayment = async(req:Request,res:Response)=>{
         if(updatedPayment == null){
             res.status(404).json({message:"Payment Not Found"})
         }else{
-            res.status(200).json({message:updatedPayment})
+            res.status(200).json(updatedPayment)
         }
         
     }catch(error:any){

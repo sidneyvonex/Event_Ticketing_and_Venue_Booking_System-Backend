@@ -50,9 +50,9 @@ export const authMiddleware = async(req:Request,res:Response,next:NextFunction,r
     }
     const userType = decodedToken?.userRole; // Get the user role from the decoded token
 
-    if(requiredRole === "both" && (userType === "admin" || userType === "member")) {
+    if(requiredRole === "both" && (userType === "admin" || userType === "user")) {
         // If the required role is both and the user is either an admin or a member
-        if(decodedToken?.userRole === "admin" || decodedToken?.userRole === "member"){
+        if(decodedToken?.userRole === "admin" || decodedToken?.userRole === "user"){
             req.user = decodedToken; // Attach the decoded token to the request object
             next(); // Call the next middleware or route handler
             return; // Prevent further execution
@@ -74,8 +74,8 @@ export const authMiddleware = async(req:Request,res:Response,next:NextFunction,r
 export const adminRoleAuth = async(req:Request,res:Response,next:NextFunction) =>{await authMiddleware(req,res,next,"admin")} 
 
 
-//Middleware to check if the User is an member/Norma User
-export const memberRoleAuth = async(req:Request,res:Response,next:NextFunction) =>{await authMiddleware(req,res,next,"member")} 
+//Middleware to check if the User is an member/Normal User
+export const memberRoleAuth = async(req:Request,res:Response,next:NextFunction) =>{await authMiddleware(req,res,next,"user")} 
 
 
 //Middleware to check if the User is either an Admin or a Member

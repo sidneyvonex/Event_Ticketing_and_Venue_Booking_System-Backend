@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { createUser, deleteUser, getUserById, getUsers, updateUser } from "./user.controller";
-// import { adminRoleAuth } from "../Middleware/bearAuth";
+import { adminRoleAuth,bothRoleAuth,memberRoleAuth } from "../Middleware/bearAuth";
 
- 
+
 export const userRouter = Router();
- 
+
 
 /**
  * @swagger
@@ -35,9 +35,8 @@ export const userRouter = Router();
  *                     type: string
  */
 // User routes definition
-
 // Get all users
-userRouter.get('/users',/*adminRoleAuth,*/ getUsers);
+userRouter.get('/users',adminRoleAuth, getUsers);
 //Swagger documentation for GET
 /**
  * @swagger
@@ -57,7 +56,7 @@ userRouter.get('/users',/*adminRoleAuth,*/ getUsers);
  */
  
 // Get user by ID
-userRouter.get('/users/:id', getUserById);
+userRouter.get('/users/:id',bothRoleAuth, getUserById);
 //Swagger documentation for GET by ID
 /**
  * @swagger
@@ -85,14 +84,14 @@ userRouter.get('/users/:id', getUserById);
 
 
 // Create a new user
-userRouter.post('/users', createUser);
+userRouter.post('/users',memberRoleAuth, createUser);
 
 
 // Update an existing user
-userRouter.put('/users/:id',updateUser);
+userRouter.put('/users/:id',bothRoleAuth,updateUser);
 
- 
+
 // Delete an existing user
-userRouter.delete('/users/:id', deleteUser);
+userRouter.delete('/users/:id', adminRoleAuth,deleteUser);
 
 

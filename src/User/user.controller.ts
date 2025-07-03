@@ -9,7 +9,9 @@ export const getUsers = async (req: Request, res: Response) => {
         if (allUsers == null || allUsers.length == 0) {
           res.status(404).json({ message: "No users found" });
         }else{
-            res.status(200).json(allUsers);            
+            // Remove password from each user object before sending response
+            const usersWithoutPasswords = allUsers.map(({ password, ...user }) => user);
+            res.status(200).json(usersWithoutPasswords);         
         }            
     } catch (error:any) {
         res.status(500).json({ error:error.message || "Failed to fetch users" });
