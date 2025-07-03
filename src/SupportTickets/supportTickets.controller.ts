@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import {getAllSupportTicketsService,getSupportTicketByIdService,createSupportTicketService,updateSupportTicketService,deleteSupportTicketService} from "./support.service"
+import { ticketValidator } from "../Validation/supportTicketValidator";
 
 
 export const getAllSupportTicket = async(req:Request,res:Response) =>{
@@ -38,6 +39,11 @@ export const createSupportTicket = async(req:Request,res:Response) =>{
         res.status(400).json({message:"All fields are Required"})
     }
     try{
+        const parseResult = ticketValidator.safeParse(req.body)
+        if(!parseResult.success){
+            res.status(400).json({error:parseResult.error.issues})
+            return;
+        } 
         const newSupportTicket = await createSupportTicketService({userId,subject,description,supportTicketStatus})
         if(newSupportTicket == null){
             res.status(500).json({message:"Failed to create Ticket"})
@@ -59,6 +65,11 @@ export const updateSupportTicket = async(req:Request,res:Response) =>{
         res.status(400).json({message:"All fields are Required"})
     }
     try{
+        const parseResult = ticketValidator.safeParse(req.body)
+        if(!parseResult.success){
+            res.status(400).json({error:parseResult.error.issues})
+            return;
+        } 
         const updatedSupportTicket = await updateSupportTicketService(supportTicketId,{userId,subject,description,supportTicketStatus});
         if(updateSupportTicket == null){
             res.status(404).json({message:"Support Ticket Not Found"})

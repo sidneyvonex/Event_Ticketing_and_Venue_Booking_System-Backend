@@ -1,5 +1,6 @@
 import {Request,Response} from "express"
 import {getAllBookingsService,getBookingByIdService,createBookingSevice,updateBookingService,deleteBookingService} from "./booking.service"
+import { bookingValidator } from "../Validation/bookingValidator";
 
 export const getAllBookings = async(req:Request,res:Response) =>{
     try{
@@ -39,6 +40,11 @@ export const createBooking = async(req:Request,res:Response) =>{
         return; // Prevent further execution
     }
     try{
+        const parseResult = bookingValidator.safeParse(req.body)
+        if(!parseResult.success){
+            res.status(400).json({error:parseResult.error.issues})
+            return;
+        } 
         const newBooking = await  createBookingSevice({userId,eventId,quantity,totalAmount,bookingStatus});
         if(newBooking == null){
             res.status(500).json({message:"Failed to create Booking"})
@@ -62,15 +68,20 @@ export const updateBooking = async(req:Request,res:Response) =>{
         return; // Prevent further execution
     }
     try{
+        const parseResult = bookingValidator.safeParse(req.body)
+        if(!parseResult.success){
+            res.status(400).json({error:parseResult.error.issues})
+            return;
+        } 
         const updatedBooking = await updateBookingService(bookingId,{bookingId,userId,eventId,quantity,totalAmount,bookingStatus});
         if(updatedBooking == null){
             res.status(404).json({message:"Booking not found or failed to update"});
-    }else{
-            res.status(200).json({message:updatedBooking});
+        }else{
+                res.status(200).json({message:updatedBooking});
+            }
+        }catch(error:any){
+            res.status(500).json({error:error.message || "Failed to update Booking"})
         }
-    }catch(error:any){
-        res.status(500).json({error:error.message || "Failed to update Booking"})
-    }
 }
 
 export const deleteBooking = async(req:Request,res:Response) =>{

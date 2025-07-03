@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { getAllEventsService,getEventByIdService,createEventService,updateEventService,deleteEventService } from "./event.service";
+import { eventValidator } from "../Validation/eventValidator";
 
 
 
@@ -41,6 +42,11 @@ export const createEvent = async (req: Request, res: Response) => {
         return; // Prevent further execution
     }
     try {
+        const parseResult = eventValidator.safeParse(req.body)
+        if(!parseResult.success){
+            res.status(400).json({error:parseResult.error.issues})
+            return;
+        } 
         const eventDateObj = new Date(eventDate);
         const newEvent = await createEventService({  eventTitle,description,venueId,category,eventDate: eventDateObj,eventTime,ticketPrice,ticketsTotal,ticketsSold });
         if (newEvent == null) {
@@ -65,6 +71,11 @@ export const updateEvent = async (req: Request, res: Response) => {
         return; // Prevent further execution
     }
     try {
+        const parseResult = eventValidator.safeParse(req.body)
+        if(!parseResult.success){
+            res.status(400).json({error:parseResult.error.issues})
+            return;
+        } 
         const eventDateObj = new Date(eventDate);
         const updateEvent = await updateEventService(eventId, { eventTitle,description,venueId,category,eventDate:eventDateObj,eventTime,ticketPrice,ticketsTotal,ticketsSold});
         if (updateEvent == null) {

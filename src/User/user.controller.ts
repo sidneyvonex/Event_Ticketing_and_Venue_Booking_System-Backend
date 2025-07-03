@@ -18,7 +18,7 @@ export const getUsers = async (req: Request, res: Response) => {
         res.status(500).json({ error:error.message || "Failed to fetch users" });
     }
 }
- 
+
 export const getUserById = async (req: Request, res: Response) => {
     const userId = parseInt(req.params.id);
     if (isNaN(userId)) {
@@ -75,6 +75,7 @@ export const updateUser = async (req: Request, res: Response) => {
         return; // Prevent further execution
     }
     try {
+        
         const updatedUser = await updateUserServices(userId, { firstName,lastName,email,password,contactPhone,address });
         if (updatedUser == null) {
             res.status(404).json({ message: "User not found or failed to update" });

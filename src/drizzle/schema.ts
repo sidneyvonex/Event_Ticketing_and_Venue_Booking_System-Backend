@@ -77,7 +77,7 @@ export const paymentsTable = pgTable("paymentsTable", {
 });
 
 //9.SupportTicketStatus Enum
-export const supportStatus = pgEnum("support_status", ["Open", "In Progress", "Resolved", "Closed"]);
+export const supportStatus = pgEnum("supportStatus", ["Open", "In Progress", "Resolved", "Closed"]);
 
 //10. Ticket Table
 export const supportTicketTable = pgTable("supportTicketTable", {

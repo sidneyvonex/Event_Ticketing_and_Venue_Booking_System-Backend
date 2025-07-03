@@ -2,10 +2,16 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { createUserService, getUserByEmailService } from "./auth.services";
+import { loginValidator, userValidator } from "../Validation/user.validator";
 
 export const createUser = async (req: Request, res: Response) => {
 
     try {
+        const parseResult = userValidator.safeParse(req.body)
+        if(!parseResult.success){
+            res.status(400).json({error:parseResult.error.issues})
+            return;
+        } 
         const { firstName,lastName,email,password,contactPhone,address,userRole } = req.body; //destructuring the request body
         if (!firstName||!lastName ||!email||!password||!contactPhone||!address) {
             res.status(400).json({ error: "All fields are required" });
@@ -46,6 +52,11 @@ export const loginUser =async(req:Request,res:Response)=>{
     const user = req.body; // Get user credentials from request body
 
     try{
+        const parseResult = loginValidator.safeParse(req.body)
+        if(!parseResult.success){
+            res.status(400).json({error:parseResult.error.issues})
+            return;
+        } 
         const existingUser = await getUserByEmailService(user.email);
 
         if (!existingUser){
