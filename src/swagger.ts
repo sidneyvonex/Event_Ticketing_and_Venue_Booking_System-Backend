@@ -8,7 +8,24 @@ const options ={
         info:{
             title: "Event Ticketing and Venue Booking System API",
             version: "1.0.0",
-            description: "API documentation for the Event Ticketing and Venue Booking System"
+            description: "API documentation for the Event Ticketing and Venue Booking System",
+            contact:{
+                name:"Code with Sidney",
+                url:"https://github.com/sidneyvonex",
+                email:"sidneyvonex@gmail.com"
+            }
+        },
+        components:{
+            securitySchemes:{
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT"
+                }
+            }
+        },
+        security:{
+            bearerAuth: [] // This applies the bearerAuth security scheme globally
         },
         servers:[
             {
@@ -17,7 +34,9 @@ const options ={
             }
         ]
     },
-    apis:['./src/**/*.ts'], // Path to the API docs
+    apis:['./src/**/*.ts', // Path to the API docs
+         './src/docs/swaggerSchemas.ts' // Example schemas
+    ], 
 }
 
 const swaggerSpec = swaggerJSDoc(options);

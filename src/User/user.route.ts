@@ -5,35 +5,6 @@ import { adminRoleAuth,bothRoleAuth } from "../Middleware/bearAuth";
 
 export const userRouter = Router();
 
-
-/**
- * @swagger
- * components:
- *      schemas:
- *          User:
- *              type: object
- *              properties:
- *                  userId:
- *                      type: integer
- *                  firstName:
- *                      type: string
- *                  lastName:
- *                      type: string
- *                  email:
- *                      type: string
- *                  emailVerified:
- *                      type: integer
- *                  contactPhone:
- *                      type: string
- *                  address:
- *                      type: string
- *                  userRole:
- *                      type: string
- *                  createdAt:
- *                      type: string
- *                  updatedAt:
- *                     type: string
- */
 // User routes definition
 // Get all users
 userRouter.get('/users',adminRoleAuth, getUsers);
@@ -44,14 +15,15 @@ userRouter.get('/users',adminRoleAuth, getUsers);
  *   get:
  *     summary: Get all users
  *     description: Retrieves a list of all users (admin access only)
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Users]
  *     responses:
  *       200:
  *         description: A list of users
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
  *                 $ref: '#/components/schemas/User'
  */
  
@@ -64,6 +36,7 @@ userRouter.get('/users/:id',adminRoleAuth, getUserById);
  *   get:
  *     summary: Get User By ID
  *     description: Fetch a single user by their ID
+ *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: id

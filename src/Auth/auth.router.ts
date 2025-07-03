@@ -12,6 +12,7 @@ authRouter.post('/auth/register',createUser)
  *   post:
  *     summary: Register a new user
  *     description: Creates a new user account
+ *     tags: [Users]
  *     requestBody:
  *       required: true
  *       content:

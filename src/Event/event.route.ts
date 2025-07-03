@@ -1,112 +1,21 @@
-import { Router } from "express"
-import {getAllEvents,getEventById,createEvent,updateEvent,deleteEvent} from "./event.controller"
+import { Router } from "express";
+import {
+  getAllEvents,
+  getEventById,
+  createEvent,
+  updateEvent,
+  deleteEvent
+} from "./event.controller";
 
 export const eventRouter = Router();
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     events:
- *       type: object
- *       properties:
- *         eventId:
- *           type: integer
- *         eventTitle:
- *           type: string
- *         description:
- *           type: string
- *         venueId:
- *           type: integer
- *         category:
- *           type: string
- *         eventDate:
- *           type: string
- *           format: date-time
- *         eventTime:
- *           type: string
- *           example: "14:00:00"
- *         ticketPrice:
- *           type: number
- *           format: float
- *         ticketsTotal:
- *           type: integer
- *         ticketsSold:
- *           type: integer
- */
-
-//Get all events
-eventRouter.get('/events', getAllEvents);
-/**
- * @swagger
- * components:
- *   schemas:
- *     events:
- *       type: object
- *       properties:
- *         eventId:
- *           type: integer
- *         eventTitle:
- *           type: string
- *         description:
- *           type: string
- *         venueId:
- *           type: integer
- *         category:
- *           type: string
- *         eventDate:
- *           type: string
- *           format: date-time
- *         eventTime:
- *           type: string
- *           example: "14:00:00"
- *         ticketPrice:
- *           type: number
- *           format: float
- *         ticketsTotal:
- *           type: integer
- *         ticketsSold:
- *           type: integer
- */
-
-//Get all events
-eventRouter.get('/events', getAllEvents);
-
-//Swagger Documentation for Get all Events
-/**
- * @swagger
- * /events/{id}:
- *   get:
- *     summary: Get an Event by Id
- *     description: Retrieves an Event According to Id
- *     parameters:
- *          - in: path
- *            name:id
- *            required: true
- *            description: Numeric ID Required
- *            schema:
- *              type:integer
- *     responses:
- *       200:
- *         description: A list of events
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/events'
- */
-
-
-//Get event by ID
-eventRouter.get('/events/:id', getEventById);
-//Swagger Documentation for GetEvent By Id
 /**
  * @swagger
  * /events:
  *   get:
  *     summary: Get all Events
  *     description: Retrieves a list of all events
+ *     tags: [Events]
  *     responses:
  *       200:
  *         description: A list of events
@@ -117,9 +26,33 @@ eventRouter.get('/events/:id', getEventById);
  *               items:
  *                 $ref: '#/components/schemas/events'
  */
+eventRouter.get('/events', getAllEvents);
 
-//Create a new event
-eventRouter.post('/events', createEvent);
+/**
+ * @swagger
+ * /events/{id}:
+ *   get:
+ *     summary: Get an Event by Id
+ *     description: Retrieves an event by its unique ID
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Numeric ID of the event to retrieve
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: A single event
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/events'
+ *       404:
+ *         description: Event not found
+ */
+eventRouter.get('/events/:id', getEventById);
 
 /**
  * @swagger
@@ -127,6 +60,7 @@ eventRouter.post('/events', createEvent);
  *   post:
  *     summary: Adds an Event
  *     description: Used to insert a new event into the system
+ *     tags: [Events]
  *     requestBody:
  *       required: true
  *       content:
@@ -137,10 +71,7 @@ eventRouter.post('/events', createEvent);
  *       201:
  *         description: Event added successfully
  */
-
-
-//Update an existing event
-eventRouter.put('/events/:id', updateEvent);
+eventRouter.post('/events', createEvent);
 
 /**
  * @swagger
@@ -148,6 +79,7 @@ eventRouter.put('/events/:id', updateEvent);
  *   put:
  *     summary: Updates an Existing Event
  *     description: Used to update an event in the system
+ *     tags: [Events]
  *     parameters:
  *       - in: path
  *         name: id
@@ -169,8 +101,32 @@ eventRouter.put('/events/:id', updateEvent);
  *             schema:
  *               $ref: '#/components/schemas/events'
  */
+eventRouter.put('/events/:id', updateEvent);
 
-//Delete an event
+/**
+ * @swagger
+ * /events/{id}:
+ *   delete:
+ *     summary: Deletes an Existing Event
+ *     description: Used to delete an event in the system
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Numeric ID of the event to delete
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Event deleted successfully
+ *       404:
+ *         description: Event not found
+ *       400:
+ *         description: Invalid Event ID
+ *       500:
+ *         description: Internal server error
+ */
 eventRouter.delete('/events/:id', deleteEvent);
 
 /**
@@ -179,6 +135,7 @@ eventRouter.delete('/events/:id', deleteEvent);
  *   delete:
  *     summary: Deletes an Existing Event
  *     description: Used to delete an event in the system
+ *     tags: [Events]
  *     parameters:
  *       - in: path
  *         name: id
@@ -194,5 +151,5 @@ eventRouter.delete('/events/:id', deleteEvent);
  *       400:
  *         description: Invalid Event ID
  *       500:
- *         description: Failed to delete Event
+ *         description: Internal server error
  */
