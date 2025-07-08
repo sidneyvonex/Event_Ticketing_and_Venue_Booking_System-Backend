@@ -6,6 +6,15 @@ import { paymentsTable,TPaymentInsert,TPaymentSelect } from "../drizzle/schema"
 
 export const getAllPaymentsService = async():Promise<TPaymentSelect[] | null> =>{
     return await db.query.paymentsTable.findMany({
+        with:{
+           booking:{
+            columns:{
+                userId:true,
+                eventId:true,
+                bookingStatus:true,
+            }
+           } 
+        },
         orderBy:[desc(paymentsTable.paymentId)]
     })
 }

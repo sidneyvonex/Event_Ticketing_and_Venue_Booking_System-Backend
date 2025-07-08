@@ -5,7 +5,7 @@ export const bookingValidator =z.object({
     userId:z.number().int().positive().nonnegative(),
     eventId:z.number().int().positive().nonnegative(),
     quantity:z.number().min(1,"Quantity is Required").nonnegative(),
-    ticketsPrice:z.coerce.number({ invalid_type_error: "ticketPrice is required" }).nonnegative("ticketPrice cannot be negative")
+    totalAmount:z.coerce.number({ invalid_type_error: "Total Amount is required" }).nonnegative("ticketPrice cannot be negative")
     .refine((val) => {
         // Check for at most two decimal places
         const str = val.toString();

@@ -4,6 +4,15 @@ import {supportTicketTable,TSupportTicketInsert,TSupportTicketSelect} from "../d
 
 export const getAllSupportTicketsService = async():Promise<TSupportTicketSelect[] | null> =>{
     return await db.query.supportTicketTable.findMany({
+        with:{
+            user:{
+                columns:{
+                    firstName:true,
+                    lastName:true,
+                    email:true,
+                }
+            }
+        },
         orderBy:[desc(supportTicketTable.ticketId)]
     })
 }

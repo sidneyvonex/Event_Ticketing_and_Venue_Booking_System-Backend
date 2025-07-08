@@ -9,7 +9,7 @@ export const eventValidator = z.object({
     eventDate: z.coerce.date().refine((d) => !isNaN(d.getTime()),{
         message:"Event Date must be a Valid Date"
     }),
-    ticketsPrice:z.coerce.number({ invalid_type_error: "ticketPrice is required" }).nonnegative("ticketPrice cannot be negative")
+    ticketPrice:z.coerce.number({ invalid_type_error: "ticketPrice is required" }).nonnegative("ticketPrice cannot be negative")
     .refine((val) => {
       // Check for at most two decimal places
       const str = val.toString();
