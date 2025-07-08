@@ -7,7 +7,7 @@ export const userRouter = Router();
 
 // User routes definition
 // Get all users
-userRouter.get('/users',adminRoleAuth, getUsers);
+userRouter.get('/users'/*,adminRoleAuth*/, getUsers);
 //Swagger documentation for GET
 /**
  * @swagger
@@ -33,7 +33,7 @@ userRouter.get('/users',adminRoleAuth, getUsers);
 
 
 // Get user by ID
-userRouter.get('/users/:id',memberRoleAuth, getUserById);
+userRouter.get('/users/:id',/*memberRoleAuth,*/ getUserById);
 //Swagger documentation for GET by ID
 /**
  * @swagger
@@ -74,7 +74,7 @@ userRouter.post('/users', createUser);
 
 
 // Update an existing user
-userRouter.put('/users/:id',bothRoleAuth,updateUser);
+userRouter.put('/users/:id',/*bothRoleAuth,*/updateUser);
 
 //Swagger documentation for Update
 /**
@@ -128,7 +128,7 @@ userRouter.put('/users/:id',bothRoleAuth,updateUser);
 
 
 // Delete an existing user
-userRouter.delete('/users/:id', adminRoleAuth,deleteUser);
+userRouter.delete('/users/:id', /*adminRoleAuth,*/deleteUser);
 
 /**
  * @swagger

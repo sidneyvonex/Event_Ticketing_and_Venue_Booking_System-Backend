@@ -10,6 +10,22 @@ import { venueTable,TVenueSelect,TVenueInsert } from "../drizzle/schema";
 //Get all Venues
 export const getAllVenueServices = async():Promise<TVenueSelect[] | null> => {
     return await  db.query.venueTable.findMany({
+      with:{
+          events:{
+            columns:{
+              eventTitle:true,
+              eventDate:true,
+            },
+            with:{
+              bookings:{
+                columns:{
+                  bookingStatus:true,
+                  
+                }
+              }
+            }
+          }
+      },
         orderBy:[desc(venueTable.venueId)]
     });
 }

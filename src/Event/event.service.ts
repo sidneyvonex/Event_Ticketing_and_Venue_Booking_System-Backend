@@ -10,6 +10,9 @@ import { eventTable,TEventSelect,TEventInsert} from "../drizzle/schema";
 //Get all Events
 export const getAllEventsService = async():Promise<TEventSelect[] | null> => {
     return await  db.query.eventTable.findMany({
+      with:{
+        venue:true,
+      },
         orderBy:[desc(eventTable.eventId)]
     });
 }

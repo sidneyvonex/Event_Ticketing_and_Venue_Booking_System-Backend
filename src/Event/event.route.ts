@@ -10,7 +10,7 @@ import { adminRoleAuth, bothRoleAuth, memberRoleAuth } from "../Middleware/bearA
 
 export const eventRouter = Router();
 
-eventRouter.get('/events',bothRoleAuth, getAllEvents);
+eventRouter.get('/events', getAllEvents);
 /**
  * @swagger
  * /events:
@@ -60,7 +60,7 @@ eventRouter.get('/events/:id',memberRoleAuth, getEventById);
  *         description: Event not found
 */
 
-eventRouter.post('/events',adminRoleAuth, createEvent);
+eventRouter.post('/events', createEvent);
 
 /**
  * @swagger

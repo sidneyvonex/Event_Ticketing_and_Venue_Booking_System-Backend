@@ -8,6 +8,16 @@ import { bookingTable, TBookingSelect, TBookingInsert } from "../drizzle/schema"
 
 export const getAllBookingsService = async():Promise<TBookingSelect[] |null> =>{
     return await db.query.bookingTable.findMany({
+        with:{
+            user:{
+                columns:{
+                    firstName:true,
+                    lastName:true,
+                }
+            },
+            payments:true
+        },
+
         orderBy:[desc(bookingTable.userId)]
     })
 }
