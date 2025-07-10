@@ -22,7 +22,7 @@ export const createUser = async (req: Request, res: Response) => {
 
         const existingUser = await getUserByEmailService(email);
         if (existingUser) {
-        res.status(409).json({ error: "Email already in use" });
+        res.status(409).json({ error: "Email already exists" });
         return;
 }
 
