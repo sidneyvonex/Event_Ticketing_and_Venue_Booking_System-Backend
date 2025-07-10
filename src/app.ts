@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import { rateLimiterMiddleware } from './Middleware/limiter';
 import { logger } from './Middleware/logger';
 import { swaggerSetup } from './swagger';
+import cors from "cors"
 
 //importing routes
 import { userRouter } from './User/user.route';
@@ -17,6 +18,7 @@ const app:Application =express();
 //Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors())
 
 // Rate Limiter Middleware
 app.use(rateLimiterMiddleware);

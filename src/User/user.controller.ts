@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { getUsersServices, getUserByIdServices, createUserServices, updateUserServices, deleteUserServices } from "./user.service";
 import { userValidator } from "../Validation/user.validator";
+import { formatDate } from "../utils/formatDate";
 
 
 
@@ -11,7 +12,11 @@ export const getUsers = async (req: Request, res: Response) => {
           res.status(404).json({ message: "No users found" });
         }else{
             // Remove password from each user object before sending response
-            const usersWithoutPasswords = allUsers.map(({ password, ...user }) => user);
+            const usersWithoutPasswords = allUsers.map(({ password, ...user }) => ({
+                ...user,
+                createdAt: formatDate(user.createdAt),
+                updatedAt: formatDate(user.updatedAt), 
+            }));
             res.status(200).json(usersWithoutPasswords);         
         }            
     } catch (error:any) {
