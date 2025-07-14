@@ -12,6 +12,7 @@ export const userTable =pgTable("userTable",{
     lastName:varchar("lastName", { length: 100 }).notNull(),
     email:varchar("email", { length: 255 }).notNull().unique(),
     emailVerified:integer("emailVerified").notNull().default(0), // 0 for false, 1 for true
+    profilePicture:varchar("profilePicture"),
     password:varchar("password", { length: 255 }).notNull(),
     contactPhone:varchar("contactPhone", { length: 15 }).notNull(),
     address:varchar("address", { length: 255 }).notNull(),
