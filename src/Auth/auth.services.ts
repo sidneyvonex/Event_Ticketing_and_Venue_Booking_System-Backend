@@ -5,7 +5,7 @@ import { TUserInsert, TUserSelect, userTable } from "../drizzle/schema"
 //Create a new user
 export const createUserService = async(user:TUserInsert):Promise<string> =>{
     await db.insert(userTable).values(user).returning();
-    return "User created successfully ✅";
+    return "User created successfully";
 }
 //Get User by email
 export const getUserByEmailService = async(email:string):Promise<TUserSelect | undefined> =>{
