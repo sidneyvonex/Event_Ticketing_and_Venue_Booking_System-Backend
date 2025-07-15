@@ -39,7 +39,8 @@ export const getAllBookingsForOneServices= async(userId:number):Promise<TBooking
                     }
                 }
             }
-        }
+        },
+        orderBy:[desc(bookingTable.bookingId)]
     })
 }
 
