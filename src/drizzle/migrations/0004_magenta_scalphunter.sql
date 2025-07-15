@@ -1,0 +1,1 @@
+ALTER TABLE "eventTable" ADD COLUMN "eventImageUrl" varchar;

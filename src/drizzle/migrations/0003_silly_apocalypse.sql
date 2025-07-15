@@ -1,0 +1,1 @@
+ALTER TABLE "userTable" ALTER COLUMN "profilePicture" DROP DEFAULT;

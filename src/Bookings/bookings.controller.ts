@@ -1,5 +1,5 @@
 import {Request,Response} from "express"
-import {getAllBookingsService,getBookingByIdService,createBookingSevice,updateBookingService,deleteBookingService} from "./booking.service"
+import {getAllBookingsService,getAllBookingsForOneServices,getBookingByIdService,createBookingSevice,updateBookingService,deleteBookingService} from "./booking.service"
 import { bookingValidator } from "../Validation/bookingValidator";
 
 export const getAllBookings = async(req:Request,res:Response) =>{
@@ -12,6 +12,29 @@ export const getAllBookings = async(req:Request,res:Response) =>{
         }
     }catch(error:any){
         res.status(500).json({error:error.message || "Failed to fetch Bookings"})
+    }
+}
+
+export const getBookingByOneId = async(req:Request,res:Response)=>{
+    const userIdParam = req.query.userId;
+    const userId = typeof userIdParam === "string" ? parseInt(userIdParam,10):NaN;
+
+    console.log("🌟 ~ getBookingByOneId ~ userId:", userId)
+
+    
+    if(isNaN(userId)){
+        res.status(400).json({message:"Invalid User Id"})
+        return;
+    }
+    try{
+        const booking = await getAllBookingsForOneServices(userId);
+        if(booking == null){
+            res.status(404).json({message:"Bookings Not Found"})
+        }else{
+            res.status(200).json(booking)
+        }
+    }catch(error:any){
+        res.status(500).json({messsage:error.message || "Failed to Fetch Bookings"})
     }
 }
 

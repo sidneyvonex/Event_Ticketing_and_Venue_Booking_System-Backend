@@ -77,6 +77,7 @@ export const loginUser =async(req:Request,res:Response)=>{
             userId: existingUser.userId,
             email: existingUser.email,
             fullName: `${existingUser.firstName} ${existingUser.lastName}`,
+            profileUrl:existingUser.profilePicture,
             userRole: existingUser.userRole,
     
             //Expire
@@ -88,7 +89,7 @@ export const loginUser =async(req:Request,res:Response)=>{
     
         let token =jwt.sign(payload, secret); // Sign the token with the payload and secret
     
-        res.status(200).json({ token, userId:existingUser.userId,email:existingUser.email,fullName:`${existingUser.firstName} ${existingUser.lastName}`,userRole:existingUser.userRole}); // Respond with success message and token
+        res.status(200).json({ token, userId:existingUser.userId,email:existingUser.email,fullName:`${existingUser.firstName} ${existingUser.lastName}`,userRole:existingUser.userRole,profileUrl:existingUser.profilePicture}); // Respond with success message and token
     
 
     }catch(error:any){

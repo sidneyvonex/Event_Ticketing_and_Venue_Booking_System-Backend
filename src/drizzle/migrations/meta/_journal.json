@@ -15,6 +15,27 @@
       "when": 1751370940619,
       "tag": "0001_stormy_domino",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1752487795643,
+      "tag": "0002_funny_rafael_vega",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752487852163,
+      "tag": "0003_silly_apocalypse",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1752564388511,
+      "tag": "0004_magenta_scalphunter",
+      "breakpoints": true
     }
   ]
 }

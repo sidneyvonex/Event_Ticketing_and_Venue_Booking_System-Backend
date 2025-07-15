@@ -22,6 +22,27 @@ export const getAllBookingsService = async():Promise<TBookingSelect[] |null> =>{
     })
 }
 
+//GET All Bookings for One User
+export const getAllBookingsForOneServices= async(userId:number):Promise<TBookingSelect[] |  null> =>{
+    return await db.query.bookingTable.findMany({
+        where:eq(bookingTable.userId,userId),
+        with:{
+            event:{
+                columns:{
+                    eventTitle:true,
+                },
+                with:{
+                    venue:{
+                        columns:{
+                            venueName:true
+                        }
+                    }
+                }
+            }
+        }
+    })
+}
+
 //Get Booking by Id
 
 export const getBookingByIdService =async(bookingId:number):Promise<TBookingSelect | undefined> =>{

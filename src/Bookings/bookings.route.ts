@@ -1,9 +1,11 @@
 import {Router} from "express"
-import {createBooking,deleteBooking,updateBooking,getAllBookings,getBookingsById} from "./bookings.controller"
+import {createBooking,deleteBooking,updateBooking,getAllBookings,getBookingsById, getBookingByOneId} from "./bookings.controller"
 
 export const bookingsRouter = Router();
 
 bookingsRouter.get('/bookings',getAllBookings);
+
+bookingsRouter.get('/bookings/user',getBookingByOneId)
 
 bookingsRouter.get('/bookings/:id',getBookingsById);
 

@@ -35,6 +35,7 @@ export  const eventTable = pgTable("eventTable",{
     eventId:serial("eventId").primaryKey(),
     eventTitle:text("eventTitle").notNull(),
     description:text("description").notNull(),
+    eventImageUrl:varchar("eventImageUrl"),
     venueId:integer("venueId").notNull().references(()=> venueTable.venueId, { onDelete: "cascade" }),
     category:varchar("category", { length: 50 }).notNull(),
     eventDate:timestamp("eventDate", { withTimezone: true }).notNull(),
