@@ -27,13 +27,13 @@ export const getEventByIdService = async(eventId: number):Promise<TEventSelect |
 // Create a new Event
 export const createEventService = async(event:TEventInsert):Promise<string> => {
       await db.insert(eventTable).values(event).returning();
-       return "Event Created Successfully 😎"
+       return "Event Created Successfully "
 }
 
 // Update an existing Event
 export const updateEventService = async(eventId: number, event:TEventInsert):Promise<string> => {
    await db.update(eventTable).set(event).where(eq(eventTable.eventId,eventId));
-   return "Event Updated Succeffully 😎";
+   return "Event Updated Succeffully ";
 }
 
 // Delete a Event

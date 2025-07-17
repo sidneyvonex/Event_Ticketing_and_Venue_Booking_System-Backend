@@ -1,0 +1,1 @@
+ALTER TYPE "public"."paymentStatus" ADD VALUE 'Failed';

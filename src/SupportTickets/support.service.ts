@@ -23,17 +23,33 @@ export const getSupportTicketByIdService = async(supportTicketId:number):Promise
     })
 }
 
+export const getSupportTicketsByUserIdService = async(userId:number):Promise<TSupportTicketSelect[] | null> =>{
+    return await db.query.supportTicketTable.findMany({
+        where: eq(supportTicketTable.userId, userId),
+        with:{
+            user:{
+                columns:{
+                    firstName:true,
+                    lastName:true,
+                    email:true,
+                }
+            }
+        },
+        orderBy:[desc(supportTicketTable.ticketId)]
+    })
+}
+
 export const createSupportTicketService = async(supportTicket:TSupportTicketInsert):Promise<string> =>{
     await db.insert(supportTicketTable).values(supportTicket).returning();
-    return "Your Support Ticket has been created successfully✅"
+    return "Your Support Ticket has been created successfully"
 }
 
 export const updateSupportTicketService = async(supportTicketId:number,supportTicket:TSupportTicketInsert):Promise<string> => {
     await db.update(supportTicketTable).set(supportTicket).where(eq(supportTicketTable.ticketId,supportTicketId))
-    return "Support Ticket Updated Successfully✅"
+    return "Support Ticket Updated Successfully"
 }
 
 export const deleteSupportTicketService = async(supportTicketId:number):Promise<string> =>{
     await db.delete(supportTicketTable).where(eq(supportTicketTable.ticketId,supportTicketId))
-    return "Your Support Ticket has been deleted Successfully✅"
+    return "Your Support Ticket has been deleted Successfully"
 }

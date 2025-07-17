@@ -23,13 +23,17 @@ export const getAllBookingsService = async():Promise<TBookingSelect[] |null> =>{
 }
 
 //GET All Bookings for One User
-export const getAllBookingsForOneServices= async(userId:number):Promise<TBookingSelect[] |  null> =>{
+export const getAllBookingsForOneUserService= async(userId:number):Promise<TBookingSelect[] |  null> =>{
     return await db.query.bookingTable.findMany({
         where:eq(bookingTable.userId,userId),
         with:{
             event:{
                 columns:{
                     eventTitle:true,
+                    eventDate:true,
+                    eventTime:true,
+                    ticketsTotal:true,
+                    ticketPrice:true,
                 },
                 with:{
                     venue:{
@@ -55,16 +59,16 @@ export const getBookingByIdService =async(bookingId:number):Promise<TBookingSele
 //Create a new Booking
 export const createBookingSevice = async(booking:TBookingInsert):Promise<string> =>{
     await db.insert(bookingTable).values(booking).returning();
-    return "Your booking has been created successfully✅"
+    return "Your booking has been created successfully"
 }
 
 //Update a booking
 export const updateBookingService = async(bookingId:number,booking:TBookingInsert):Promise<string> => {
     await db.update(bookingTable).set(booking).where(eq(bookingTable.bookingId,bookingId));
-    return "Your Booking has been Updated Successfully✅"
+    return "Your Booking has been Updated Successfully"
 }
 //delete a booking
 export const deleteBookingService = async(bookingId:number):Promise<string> => {
     await db.delete(bookingTable).where(eq(bookingTable.bookingId,bookingId))
-    return "Your Booking has been deleted successfully✅"
+    return "Your Booking has been deleted successfully"
 }

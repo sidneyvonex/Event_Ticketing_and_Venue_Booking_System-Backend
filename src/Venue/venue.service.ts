@@ -40,13 +40,13 @@ export const getVenueByIdService = async(venueId: number):Promise<TVenueSelect |
 // Create a new Venue
 export const createVenueService = async(venue:TVenueInsert):Promise<string> => {
       await db.insert(venueTable).values(venue).returning();
-       return "Venue Created Successfully 😎"
+       return "Venue Created Successfully"
 }
 
 // Update an existing Venue
 export const updateVenueService = async(venueId: number, venue:TVenueInsert):Promise<string> => {
    await db.update(venueTable).set(venue).where(eq(venueTable.venueId,venueId));
-   return "Venue Updated Succeffully 😎";
+   return "Venue Updated Succeffully ";
 }
 
 // Delete a Venue

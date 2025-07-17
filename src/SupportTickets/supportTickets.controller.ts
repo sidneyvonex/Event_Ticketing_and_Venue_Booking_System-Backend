@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import {getAllSupportTicketsService,getSupportTicketByIdService,createSupportTicketService,updateSupportTicketService,deleteSupportTicketService} from "./support.service"
+import {getAllSupportTicketsService,getSupportTicketByIdService,getSupportTicketsByUserIdService,createSupportTicketService,updateSupportTicketService,deleteSupportTicketService} from "./support.service"
 import { ticketValidator } from "../Validation/supportTicketValidator";
 
 
@@ -20,6 +20,7 @@ export const getSupportTicketById = async(req:Request,res:Response) =>{
     const supportTicketId = parseInt(req.params.id)
     if(isNaN(supportTicketId)){
         res.status(400).json({message:"Invalid Support Ticket"})
+        return;
     }
     try{
         const selectedSupportTicket = await getSupportTicketByIdService(supportTicketId);
@@ -33,10 +34,32 @@ export const getSupportTicketById = async(req:Request,res:Response) =>{
     }
 }
 
+export const getSupportTicketsByUserId = async(req:Request,res:Response) =>{
+    const userIdParam = req.query.userId;
+    const userId = typeof userIdParam === "string" ? parseInt(userIdParam,10) : NaN;
+    
+    if(isNaN(userId)){
+        res.status(400).json({message:"Invalid User Id"})
+        return;
+    }
+    
+    try{
+        const userSupportTickets = await getSupportTicketsByUserIdService(userId);
+        if(userSupportTickets == null || userSupportTickets.length === 0){
+            res.status(404).json({message:"No Support Tickets Found for this User"})
+        }else{
+            res.status(200).json(userSupportTickets)
+        }
+    }catch(error:any){
+        res.status(500).json({error:error.message || "Failed to fetch User Support Tickets"})
+    }
+}
+
 export const createSupportTicket = async(req:Request,res:Response) =>{
-    const {userId,subject,description,supportTicketStatus} = req.body
-    if(!userId||!subject||!description||!supportTicketStatus){
+    const {userId,subject,description,supportTicketStatus,category} = req.body
+    if(!userId||!subject||!description||!supportTicketStatus||!category){
         res.status(400).json({message:"All fields are Required"})
+        return;
     }
     try{
         const parseResult = ticketValidator.safeParse(req.body)
@@ -44,7 +67,7 @@ export const createSupportTicket = async(req:Request,res:Response) =>{
             res.status(400).json({error:parseResult.error.issues})
             return;
         } 
-        const newSupportTicket = await createSupportTicketService({userId,subject,description,supportTicketStatus})
+        const newSupportTicket = await createSupportTicketService({userId,subject,description,category,supportTicketStatus})
         if(newSupportTicket == null){
             res.status(500).json({message:"Failed to create Ticket"})
         }else{
@@ -59,10 +82,12 @@ export const updateSupportTicket = async(req:Request,res:Response) =>{
     const supportTicketId = parseInt(req.params.id)
     if(isNaN(supportTicketId)){
         res.status(500).json({message:"Invalid Ticket Id"})
+        return;
     }
-    const {userId,subject,description,supportTicketStatus} = req.body
+    const {userId,subject,description,category,supportTicketStatus} = req.body
     if(!userId||!subject||!description||!supportTicketStatus){
         res.status(400).json({message:"All fields are Required"})
+        return;
     }
     try{
         const parseResult = ticketValidator.safeParse(req.body)
@@ -70,11 +95,11 @@ export const updateSupportTicket = async(req:Request,res:Response) =>{
             res.status(400).json({error:parseResult.error.issues})
             return;
         } 
-        const updatedSupportTicket = await updateSupportTicketService(supportTicketId,{userId,subject,description,supportTicketStatus});
-        if(updateSupportTicket == null){
+        const updatedSupportTicket = await updateSupportTicketService(supportTicketId,{userId,subject,description,category,supportTicketStatus});
+        if(updatedSupportTicket == null){
             res.status(404).json({message:"Support Ticket Not Found"})
         }else{
-            res.status(200).json(updateSupportTicket)
+            res.status(200).json({message:updatedSupportTicket})
         }
     }catch(error:any){
         res.status(500).json({error:error.message || "Failed to Update Support Ticket"})
@@ -85,6 +110,7 @@ export const deleteSupportTicket = async(req:Request,res:Response) =>{
     const supportTicketId = parseInt(req.params.id)
     if(isNaN(supportTicketId)){
         res.status(400).json({message:"Invalid Support Ticket Id"})
+        return;
     }
     try{
         const deletedSupportTicket = await deleteSupportTicketService(supportTicketId)

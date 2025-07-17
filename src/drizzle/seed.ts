@@ -106,12 +106,14 @@ async function seed() {
                     userId: insertedUsers[0].userId,
                     subject: "Can't download ticket",
                     description: "I booked but can't find my ticket.",
+                    category:"Account",
                     supportTicketStatus: "Open",
                     },
                     {
                     userId: insertedUsers[1].userId,
                     subject: "Event date confusion",
                     description: "The date on the email is different from the site.",
+                    category:"Booking",
                     supportTicketStatus: "In Progress",
                     },
                 ]);

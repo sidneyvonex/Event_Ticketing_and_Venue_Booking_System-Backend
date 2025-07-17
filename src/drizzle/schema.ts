@@ -63,7 +63,7 @@ export const bookingTable = pgTable("bookingTable", {
   });
 
   //7.PaymentStatus Enum
-export const paymentStatusEnum = pgEnum("paymentStatus", ["Pending", "Completed", "Cancelled"]);
+export const paymentStatusEnum = pgEnum("paymentStatus", ["Pending", "Completed", "Cancelled","Refunded","Failed"]);
 
 //8.Payments Table
 export const paymentsTable = pgTable("paymentsTable", {
@@ -81,12 +81,18 @@ export const paymentsTable = pgTable("paymentsTable", {
 //9.SupportTicketStatus Enum
 export const supportStatus = pgEnum("supportStatus", ["Open", "In Progress", "Resolved", "Closed"]);
 
-//10. Ticket Table
+
+//10.Category Enum
+export const categoryEnum =pgEnum("categoryEnum",["Payment","Technical","Booking","Account","Refund","Other"])
+
+
+//11. Ticket Table
 export const supportTicketTable = pgTable("supportTicketTable", {
     ticketId: serial("ticket_id").primaryKey(),
     userId: integer("user_id").notNull().references(() => userTable.userId),
     subject: varchar("subject", { length: 255 }).notNull(),
     description: text("description").notNull(),
+    category:categoryEnum("category").notNull(),
     supportTicketStatus:supportStatus("supportTicketStatus").notNull().default("Open"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),

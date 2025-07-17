@@ -36,6 +36,20 @@
       "when": 1752564388511,
       "tag": "0004_magenta_scalphunter",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1752664145348,
+      "tag": "0005_lazy_bloodscream",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1752709511758,
+      "tag": "0006_empty_toxin",
+      "breakpoints": true
     }
   ]
 }
