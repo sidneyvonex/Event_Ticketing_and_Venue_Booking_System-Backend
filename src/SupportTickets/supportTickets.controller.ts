@@ -56,8 +56,8 @@ export const getSupportTicketsByUserId = async(req:Request,res:Response) =>{
 }
 
 export const createSupportTicket = async(req:Request,res:Response) =>{
-    const {userId,subject,description,supportTicketStatus,category} = req.body
-    if(!userId||!subject||!description||!supportTicketStatus||!category){
+    const {userId,subject,description,category} = req.body
+    if(!userId||!subject||!description||!category){
         res.status(400).json({message:"All fields are Required"})
         return;
     }
@@ -67,7 +67,7 @@ export const createSupportTicket = async(req:Request,res:Response) =>{
             res.status(400).json({error:parseResult.error.issues})
             return;
         } 
-        const newSupportTicket = await createSupportTicketService({userId,subject,description,category,supportTicketStatus})
+        const newSupportTicket = await createSupportTicketService({userId,subject,description,category})
         if(newSupportTicket == null){
             res.status(500).json({message:"Failed to create Ticket"})
         }else{
