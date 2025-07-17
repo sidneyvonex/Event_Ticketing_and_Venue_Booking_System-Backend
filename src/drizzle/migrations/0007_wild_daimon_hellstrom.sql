@@ -1,0 +1,2 @@
+CREATE TYPE "public"."categoryEnum" AS ENUM('Payment', 'Technical', 'Booking', 'Account', 'Refund', 'Other');--> statement-breakpoint
+ALTER TABLE "supportTicketTable" ADD COLUMN "category" "categoryEnum" NOT NULL;

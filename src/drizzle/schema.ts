@@ -23,11 +23,11 @@ export const userTable =pgTable("userTable",{
 
 //3. Venue Table
 export const venueTable = pgTable("venueTable", {
-    venueId: serial("venue_id").primaryKey(),
-    venueName: varchar("name", { length: 255 }).notNull(),
-    venueAddress: varchar("address", { length: 255 }).notNull(),
-    venueCapacity: integer("capacity").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    venueId: serial("venueId").primaryKey(),
+    venueName: varchar("venueName", { length: 255 }).notNull(),
+    venueAddress: varchar("venueAddress", { length: 255 }).notNull(),
+    venueCapacity: integer("venueCapacity").notNull(),
+    createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
   });
 
 //4. Events Table
@@ -52,14 +52,14 @@ export const bookingStatusEnum = pgEnum("bookingStatus", ["Pending", "Confirmed"
 
 //6. Bookings Table
 export const bookingTable = pgTable("bookingTable", {
-    bookingId: serial("booking_id").primaryKey(),
-    userId: integer("user_id").notNull().references(() => userTable.userId),
-    eventId: integer("event_id").notNull().references(() => eventTable.eventId),
+    bookingId: serial("bookingId").primaryKey(),
+    userId: integer("userId").notNull().references(() => userTable.userId),
+    eventId: integer("eventId").notNull().references(() => eventTable.eventId),
     quantity: integer("quantity").notNull(),
-    totalAmount: numeric("total_amount", { precision: 10, scale: 2 }).notNull(),
-    bookingStatus:bookingStatusEnum("booking_status").notNull().default("Pending"),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
+    totalAmount: numeric("totalAmount", { precision: 10, scale: 2 }).notNull(),
+    bookingStatus:bookingStatusEnum("bookingStatus").notNull().default("Pending"),
+    createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
   });
 
   //7.PaymentStatus Enum
@@ -67,15 +67,15 @@ export const paymentStatusEnum = pgEnum("paymentStatus", ["Pending", "Completed"
 
 //8.Payments Table
 export const paymentsTable = pgTable("paymentsTable", {
-    paymentId: serial("payment_id").primaryKey(),
-    bookingId: integer("booking_id").notNull().references(() => bookingTable.bookingId),
+    paymentId: serial("paymentId").primaryKey(),
+    bookingId: integer("bookingId").notNull().references(() => bookingTable.bookingId),
     amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
-    paymentStatus: paymentStatusEnum("payment_status").notNull().default("Pending"),
-    paymentDate: timestamp("payment_date", { withTimezone: true }).notNull().defaultNow(),
-    paymentMethod: varchar("payment_method", { length: 50 }),
-    transactionId: varchar("transaction_id", { length: 255 }),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
+    paymentStatus: paymentStatusEnum("paymentStatus").notNull().default("Pending"),
+    paymentDate: timestamp("paymentDate", { withTimezone: true }).notNull().defaultNow(),
+    paymentMethod: varchar("paymentMethod", { length: 50 }),
+    transactionId: varchar("transactionId", { length: 255 }),
+    createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
 });
 
 //9.SupportTicketStatus Enum
@@ -83,19 +83,19 @@ export const supportStatus = pgEnum("supportStatus", ["Open", "In Progress", "Re
 
 
 //10.Category Enum
-export const categoryEnum =pgEnum("categoryEnum",["Payment","Technical","Booking","Account","Refund","Other"])
+export const categoryEnum =pgEnum("categoryEnum",["General","Payment","Technical","Booking","Account","Refund","Other"])
 
 
 //11. Ticket Table
 export const supportTicketTable = pgTable("supportTicketTable", {
-    ticketId: serial("ticket_id").primaryKey(),
-    userId: integer("user_id").notNull().references(() => userTable.userId),
+    ticketId: serial("ticketId").primaryKey(),
+    userId: integer("userId").notNull().references(() => userTable.userId),
     subject: varchar("subject", { length: 255 }).notNull(),
     description: text("description").notNull(),
-    category:categoryEnum("category").notNull(),
+    category:categoryEnum("category").notNull().default("General"),
     supportTicketStatus:supportStatus("supportTicketStatus").notNull().default("Open"),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
+    createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
   });
   
 
@@ -149,7 +149,7 @@ export const userRelations = relations(userTable, ({ many }) => ({
   }));
   
   // Booking ↔ User, Event, Payments
-  export const bookingRelations = relations(bookingTable, ({ one }) => ({
+  export const bookingRelations = relations(bookingTable, ({ one, many }) => ({
     user: one(userTable, {
       fields: [bookingTable.userId],
       references: [userTable.userId],
@@ -158,10 +158,7 @@ export const userRelations = relations(userTable, ({ many }) => ({
       fields: [bookingTable.eventId],
       references: [eventTable.eventId],
     }),
-    payments: one(paymentsTable, {
-      fields: [bookingTable.bookingId],
-      references: [paymentsTable.bookingId],
-    }),
+    payments: many(paymentsTable),
   }));
   
   // Payment ↔ Booking
