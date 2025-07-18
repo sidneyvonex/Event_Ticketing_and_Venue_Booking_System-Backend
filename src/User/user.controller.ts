@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getUsersServices, getUserByIdServices, createUserServices, updateUserServices, deleteUserServices } from "./user.service";
-import { userValidator } from "../Validation/user.validator";
+import { userValidator, userUpdateValidator } from "../Validation/user.validator";
 import { formatDate } from "../utils/formatDate";
 
 
@@ -74,26 +74,29 @@ export const updateUser = async (req: Request, res: Response) => {
         res.status(400).json({ error: "Invalid user ID" });
         return; // Prevent further execution
     }
-    const { firstName,lastName,email,password,contactPhone,address } = req.body;
-    if (!firstName||!lastName ||!email||!password||!contactPhone||!address) {
-        res.status(400).json({ error: "All fields are required" });
-        return; // Prevent further execution
-    }
+    
     try {
-        
-        const updatedUser = await updateUserServices(userId, { firstName,lastName,email,password,contactPhone,address });
+        // Validate the request body with the update validator
+        const parseResult = userUpdateValidator.safeParse(req.body);
+        if (!parseResult.success) {
+            res.status(400).json({ error: parseResult.error.issues });
+            return;
+        }
+
+        // Only include fields that were provided in the request
+        const updateData = parseResult.data;
+
+        const updatedUser = await updateUserServices(userId, updateData);
         if (updatedUser == null) {
             res.status(404).json({ message: "User not found or failed to update" });
         } else {
-            res.status(200).json({message:updatedUser});
+            res.status(200).json({message: updatedUser});
         }
     } catch (error:any) {
-        res.status(500).json({ error:error.message || "Failed to update user" });
+        res.status(500).json({ error: error.message || "Failed to update user" });
     }
 }
- 
- 
- 
+
 export const deleteUser = async (req: Request, res: Response) => {
     const userId = parseInt(req.params.id);  
     if (isNaN(userId)) {
