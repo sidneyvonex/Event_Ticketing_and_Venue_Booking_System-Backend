@@ -31,7 +31,7 @@ eventRouter.get('/events', getAllEvents);
  *                 $ref: '#/components/schemas/events'
  */
 
-eventRouter.get('/events/:id',memberRoleAuth, getEventById);
+eventRouter.get('/events/:id', getEventById);
 
 /**
  * @swagger
