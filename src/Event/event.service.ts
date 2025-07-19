@@ -20,7 +20,10 @@ export const getAllEventsService = async():Promise<TEventSelect[] | null> => {
 //Get Event by ID
 export const getEventByIdService = async(eventId: number):Promise<TEventSelect | undefined>=> {
      return await db.query.eventTable.findFirst({
-       where: eq(eventTable.eventId,eventId)
+       where: eq(eventTable.eventId,eventId),
+       with:{
+         venue:true,
+       }
      })
 }
 
