@@ -1,6 +1,7 @@
 import {Request,Response} from "express"
 import {getAllBookingsService,getAllBookingsForOneUserService,getBookingByIdService,createBookingSevice,updateBookingService,deleteBookingService} from "./booking.service"
 import { bookingValidator } from "../Validation/bookingValidator";
+import { TBookingInsert } from "../drizzle/schema";
 
 export const getAllBookings = async(req:Request,res:Response) =>{
     try{
@@ -82,18 +83,32 @@ export const updateBooking = async(req:Request,res:Response) =>{
         res.status(400).json({error:"Invalid Booking ID"})
         return; // Prevent further execution
     }
+    
+    // Extract fields from request body (any combination is allowed)
     const {userId,eventId,quantity,totalAmount,bookingStatus} = req.body;
-    if(!userId || !eventId || !quantity || !totalAmount || !bookingStatus){
-        res.status(400).json({error:"All fields are required"})
+    
+    // Check if at least one field is provided for update
+    if(!userId && !eventId && !quantity && !totalAmount && !bookingStatus){
+        res.status(400).json({error:"At least one field is required for update"})
         return; // Prevent further execution
     }
+    
     try{
-        const parseResult = bookingValidator.safeParse(req.body)
+        // Only validate provided fields
+        const updateData: Partial<TBookingInsert> = {};
+        if(userId !== undefined) updateData.userId = userId;
+        if(eventId !== undefined) updateData.eventId = eventId;
+        if(quantity !== undefined) updateData.quantity = quantity;
+        if(totalAmount !== undefined) updateData.totalAmount = totalAmount;
+        if(bookingStatus !== undefined) updateData.bookingStatus = bookingStatus;
+        
+        const parseResult = bookingValidator.partial().safeParse(updateData)
         if(!parseResult.success){
             res.status(400).json({error:parseResult.error.issues})
             return;
         } 
-        const updatedBooking = await updateBookingService(bookingId,{bookingId,userId,eventId,quantity,totalAmount,bookingStatus});
+        
+        const updatedBooking = await updateBookingService(bookingId, updateData);
         if(updatedBooking == null){
             res.status(404).json({message:"Booking not found or failed to update"});
         }else{

@@ -64,7 +64,7 @@ export const createBookingSevice = async(booking:TBookingInsert):Promise<string>
 }
 
 //Update a booking
-export const updateBookingService = async(bookingId:number,booking:TBookingInsert):Promise<string> => {
+export const updateBookingService = async(bookingId:number,booking:Partial<TBookingInsert>):Promise<string> => {
     await db.update(bookingTable).set(booking).where(eq(bookingTable.bookingId,bookingId));
     return "Your Booking has been Updated Successfully"
 }
