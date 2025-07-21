@@ -13,6 +13,7 @@ export const getAllBookingsService = async():Promise<TBookingSelect[] |null> =>{
                 columns:{
                     firstName:true,
                     lastName:true,
+                    email:true,
                 }
             },
             payments:true
