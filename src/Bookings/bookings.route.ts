@@ -11,6 +11,6 @@ bookingsRouter.get('/bookings/:id',getBookingsById);
 
 bookingsRouter.post('/bookings',createBooking);
 
-bookingsRouter.put('bookings/:id',updateBooking);
+bookingsRouter.put('/bookings/:id',updateBooking);
 
-bookingsRouter.delete('/bookings/"id',deleteBooking);
+bookingsRouter.delete('/bookings/:id',deleteBooking);
