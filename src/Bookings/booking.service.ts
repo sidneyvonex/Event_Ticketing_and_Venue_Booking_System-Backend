@@ -16,6 +16,22 @@ export const getAllBookingsService = async():Promise<TBookingSelect[] |null> =>{
                     email:true,
                 }
             },
+            event:{
+              columns:{
+                    eventTitle:true,
+                    eventDate:true,
+                    eventTime:true,
+                    ticketsTotal:true,
+                    ticketPrice:true,
+                },
+                with:{
+                    venue:{
+                        columns:{
+                            venueName:true,
+                        }
+                    }
+                }
+            },
             payments:true
         },
 
