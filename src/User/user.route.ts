@@ -158,7 +158,7 @@ userRouter.delete('/users/:id', /*adminRoleAuth,*/deleteUser);
  */
 
 // Change user password
-userRouter.patch('/users/:id/change-password', bothRoleAuth, changePassword);
+userRouter.patch('/users/:id/change-password', /*bothRoleAuth,*/ changePassword);
 /**
  * @swagger
  * /users/{id}/change-password:
@@ -204,7 +204,7 @@ userRouter.patch('/users/:id/change-password', bothRoleAuth, changePassword);
  */
 
 // Update user profile picture
-userRouter.patch('/users/:id/profile-picture', bothRoleAuth, updateProfilePicture);
+userRouter.patch('/users/:id/profile-picture', /*bothRoleAuth,*/ updateProfilePicture);
 /**
  * @swagger
  * /users/{id}/profile-picture:
