@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createUser, deleteUser, getUserById, getUsers, updateUser } from "./user.controller";
+import { createUser, deleteUser, getUserById, getUsers, updateUser, changePassword, updateProfilePicture } from "./user.controller";
 import { adminRoleAuth,bothRoleAuth, memberRoleAuth } from "../Middleware/bearAuth";
 
 
@@ -155,5 +155,92 @@ userRouter.delete('/users/:id', /*adminRoleAuth,*/deleteUser);
  *         description: Invalid User ID
  *       500:
  *         description: Failed to delete User
+ */
+
+// Change user password
+userRouter.patch('/users/:id/change-password', bothRoleAuth, changePassword);
+/**
+ * @swagger
+ * /users/{id}/change-password:
+ *   patch:
+ *     summary: Change user password
+ *     description: Allows a user to change their password by providing current and new password
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Numeric ID of the user
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: User's current password
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 6
+ *                 description: New password (minimum 6 characters)
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *       400:
+ *         description: Invalid input or current password incorrect
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Failed to change password
+ */
+
+// Update user profile picture
+userRouter.patch('/users/:id/profile-picture', bothRoleAuth, updateProfilePicture);
+/**
+ * @swagger
+ * /users/{id}/profile-picture:
+ *   patch:
+ *     summary: Update user profile picture
+ *     description: Updates the profile picture URL for a user
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Numeric ID of the user
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - profilePictureUrl
+ *             properties:
+ *               profilePictureUrl:
+ *                 type: string
+ *                 description: URL or path to the new profile picture
+ *     responses:
+ *       200:
+ *         description: Profile picture updated successfully
+ *       400:
+ *         description: Invalid input or missing profile picture URL
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Failed to update profile picture
  */
 

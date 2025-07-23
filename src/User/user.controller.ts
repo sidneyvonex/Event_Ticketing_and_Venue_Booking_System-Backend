@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { getUsersServices, getUserByIdServices, createUserServices, updateUserServices, deleteUserServices } from "./user.service";
+import { getUsersServices, getUserByIdServices, createUserServices, updateUserServices, deleteUserServices, changePasswordService, updateProfilePictureService } from "./user.service";
 import { userValidator, userUpdateValidator } from "../Validation/user.validator";
 import { formatDate } from "../utils/formatDate";
+import bcrypt from "bcrypt";
 
 
 
@@ -120,4 +121,76 @@ export const deleteUser = async (req: Request, res: Response) => {
     } catch (error:any) {    
         res.status(500).json({ error:error.message || "Failed to delete user" });
     }    
+}
+
+export const changePassword = async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id);
+    if (isNaN(userId)) {
+        res.status(400).json({ error: "Invalid user ID" });
+        return;
+    }
+
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+        res.status(400).json({ error: "Current password and new password are required" });
+        return;
+    }
+
+    if (newPassword.length < 6) {
+        res.status(400).json({ error: "New password must be at least 6 characters long" });
+        return;
+    }
+
+    try {
+        // First, get the user to verify current password
+        const user = await getUserByIdServices(userId);
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+
+        // Verify current password
+        const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+        if (!isCurrentPasswordValid) {
+            res.status(400).json({ error: "Current password is incorrect" });
+            return;
+        }
+
+        // Hash the new password
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update password
+        const result = await changePasswordService(userId, hashedNewPassword);
+        res.status(200).json({ message: result });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message || "Failed to change password" });
+    }
+}
+
+export const updateProfilePicture = async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id);
+    if (isNaN(userId)) {
+        res.status(400).json({ error: "Invalid user ID" });
+        return;
+    }
+
+    const { profilePictureUrl } = req.body;
+    if (!profilePictureUrl) {
+        res.status(400).json({ error: "Profile picture URL is required" });
+        return;
+    }
+
+    try {
+        // Check if user exists
+        const user = await getUserByIdServices(userId);
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+
+        const result = await updateProfilePictureService(userId, profilePictureUrl);
+        res.status(200).json({ message: result });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message || "Failed to update profile picture" });
+    }
 }

@@ -38,3 +38,15 @@ export const deleteUserServices = async(userId: number):Promise<string> => {
   await db.delete(userTable).where(eq(userTable.userId,userId));
   return "User Delete Sucessfully";
 }
+
+// Change user password
+export const changePasswordService = async(userId: number, newPassword: string):Promise<string> => {
+  await db.update(userTable).set({ password: newPassword }).where(eq(userTable.userId, userId));
+  return "Password updated successfully";
+}
+
+// Update user profile picture
+export const updateProfilePictureService = async(userId: number, profilePictureUrl: string):Promise<string> => {
+  await db.update(userTable).set({ profilePicture: profilePictureUrl }).where(eq(userTable.userId, userId));
+  return "Profile picture updated successfully";
+}
