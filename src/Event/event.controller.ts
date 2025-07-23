@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { getAllEventsService,getEventByIdService,createEventService,updateEventService,deleteEventService } from "./event.service";
 import { eventValidator } from "../Validation/eventValidator";
+import { TEventInsert } from "../drizzle/schema";
 
 
 
@@ -65,31 +66,45 @@ export const updateEvent = async (req: Request, res: Response) => {
         res.status(400).json({ error: "Invalid Event ID" });
         return; // Prevent further execution
     }
-    const { eventTitle,description,venueId,category,eventDate,eventTime,ticketPrice,ticketsTotal,ticketsSold } = req.body;
-    if (!eventTitle||!description||!venueId||!category||!eventDate||!eventTime||!ticketPrice||!ticketsTotal||!ticketsSold) {
-        res.status(400).json({ error: "All fields are required" });
+    
+    // Extract fields from request body (any combination is allowed)
+    const { eventTitle,description,venueId,category,eventDate,eventTime,ticketPrice,ticketsTotal } = req.body;
+    
+    // Check if at least one field is provided for update
+    if (!eventTitle && !description && !venueId && !category && !eventDate && !eventTime && !ticketPrice && !ticketsTotal) {
+        res.status(400).json({ error: "At least one field is required for update" });
         return; // Prevent further execution
     }
+    
     try {
-        const parseResult = eventValidator.safeParse(req.body)
+        // Only validate provided fields
+        const updateData: Partial<TEventInsert> = {};
+        if (eventTitle !== undefined) updateData.eventTitle = eventTitle;
+        if (description !== undefined) updateData.description = description;
+        if (venueId !== undefined) updateData.venueId = venueId;
+        if (category !== undefined) updateData.category = category;
+        if (eventDate !== undefined) updateData.eventDate = new Date(eventDate);
+        if (eventTime !== undefined) updateData.eventTime = eventTime;
+        if (ticketPrice !== undefined) updateData.ticketPrice = ticketPrice;
+        if (ticketsTotal !== undefined) updateData.ticketsTotal = ticketsTotal;
+        
+        const parseResult = eventValidator.partial().safeParse(updateData)
         if(!parseResult.success){
             res.status(400).json({error:parseResult.error.issues})
             return;
         } 
-        const eventDateObj = new Date(eventDate);
-        const updateEvent = await updateEventService(eventId, { eventTitle,description,venueId,category,eventDate:eventDateObj,eventTime,ticketPrice,ticketsTotal,ticketsSold});
-        if (updateEvent == null) {
+        
+        const updatedEvent = await updateEventService(eventId, updateData);
+        if (updatedEvent == null) {
             res.status(404).json({ message: "Event not found or failed to update" });
         } else {
-            res.status(200).json({message:updateEvent});
+            res.status(200).json({message:updatedEvent});
         }
     } catch (error:any) {
         res.status(500).json({ error:error.message || "Failed to update Event" });
     }
 }
- 
- 
- 
+
 export const deleteEvent = async (req: Request, res: Response) => {
     const eventId = parseInt(req.params.id);  
     if (isNaN(eventId)) {

@@ -34,7 +34,7 @@ export const createEventService = async(event:TEventInsert):Promise<string> => {
 }
 
 // Update an existing Event
-export const updateEventService = async(eventId: number, event:TEventInsert):Promise<string> => {
+export const updateEventService = async(eventId: number, event:Partial<TEventInsert>):Promise<string> => {
    await db.update(eventTable).set(event).where(eq(eventTable.eventId,eventId));
    return "Event Updated Succeffully ";
 }
