@@ -37,11 +37,13 @@ export const getEventById = async (req: Request, res: Response) => {
 }
  
 export const createEvent = async (req: Request, res: Response) => {
-    const { eventTitle,description,venueId,category,eventDate,eventTime,ticketPrice,ticketsTotal,ticketsSold } = req.body;
-    if (!eventTitle||!description||!venueId||!category||!eventDate||!eventTime||!ticketPrice||!ticketsTotal||!ticketsSold) {
-        res.status(400).json({ error: "All fields are required" });
-        return; // Prevent further execution
-    }
+    const { eventTitle,description,venueId,category,eventDate,eventTime,ticketPrice,ticketsTotal,ticketsSold,eventImageUrl } = req.body;
+
+// And update the validation to include eventImageUrl (make it optional since it might be empty):
+if (!eventTitle||!description||!venueId||!category||!eventDate||!eventTime||!ticketPrice||!ticketsTotal||ticketsSold === undefined) {
+    res.status(400).json({ error: "All fields are required" });
+    return;
+}
     try {
         const parseResult = eventValidator.safeParse(req.body)
         if(!parseResult.success){
