@@ -71,6 +71,13 @@
       "when": 1752746911791,
       "tag": "0009_wonderful_magma",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1753359872246,
+      "tag": "0010_exotic_blizzard",
+      "breakpoints": true
     }
   ]
 }

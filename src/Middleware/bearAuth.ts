@@ -24,11 +24,34 @@ type DecodedToken ={
 //Authentication middleware to protect routes
 export const verifyToken =(token:string,secret:string) => {
     try{
+        // Check if secret exists
+        if (!secret) {
+            console.error('JWT_SECRET is not defined in environment variables');
+            return null;
+        }
+
         //decodes the token using the secret and get the payload
         const decoded = jwt.verify(token, secret) as DecodedToken; // Cast the decoded token to the DecodedToken type
+        
+        // Validate token structure
+        if (!decoded.userId || !decoded.email || !decoded.userRole) {
+            console.error('Invalid token structure - missing required fields');
+            return null;
+        }
+
         return decoded; // Return the decoded payload if verification is successful
 
-    }catch (error) {
+    }catch (error: any) {
+        // Log specific JWT errors for debugging
+        if (error.name === 'TokenExpiredError') {
+            console.error('Token has expired');
+        } else if (error.name === 'JsonWebTokenError') {
+            console.error('Invalid token format');
+        } else if (error.name === 'NotBeforeError') {
+            console.error('Token not active yet');
+        } else {
+            console.error('Token verification failed:', error.message);
+        }
         return null; // Return null if verification fails
     }
 
@@ -44,21 +67,41 @@ export const authMiddleware = (requiredRole: 'admin' | 'user' | 'both') =>
       }
   
       const token = authHeader.split(' ')[1];
-      const decoded = verifyToken(token, process.env.JWT_SECRET!);
+      
+      // Check if token exists after splitting
+      if (!token) {
+        res.status(401).json({ error: "Token is missing from Authorization header" });
+        return;
+      }
+
+      // Check if JWT_SECRET exists
+      if (!process.env.JWT_SECRET) {
+        console.error('JWT_SECRET environment variable is not set');
+        res.status(500).json({ error: "Server configuration error" });
+        return;
+      }
+
+      const decoded = verifyToken(token, process.env.JWT_SECRET);
       if (!decoded) {
-         res.status(401).json({ error: "Invalid token - Access denied." });
+         res.status(401).json({ error: "Invalid or expired token - Access denied." });
          return;
       }
   
-      const role = decoded.userRole;
+      const role = decoded.userRole?.toLowerCase(); // Normalize role case
+      const normalizedRequiredRole = requiredRole.toLowerCase();
+      
       const isAllowed =
-        requiredRole === 'both' ? (role === 'admin' || role === 'user')
-        : requiredRole === 'admin' ? role === 'admin'
-        : requiredRole === 'user' ? role === 'user'
+        normalizedRequiredRole === 'both' ? (role === 'admin' || role === 'user')
+        : normalizedRequiredRole === 'admin' ? role === 'admin'
+        : normalizedRequiredRole === 'user' ? role === 'user'
         : false;
   
       if (!isAllowed) {
-        res.status(403).json({ error: "Access denied: You do not have the required permissions." });
+        res.status(403).json({ 
+          error: "Access denied: You do not have the required permissions.",
+          required: requiredRole,
+          current: decoded.userRole
+        });
         return;
       }
   

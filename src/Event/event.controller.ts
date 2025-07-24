@@ -51,7 +51,18 @@ if (!eventTitle||!description||!venueId||!category||!eventDate||!eventTime||!tic
             return;
         } 
         const eventDateObj = new Date(eventDate);
-        const newEvent = await createEventService({  eventTitle,description,venueId,category,eventDate: eventDateObj,eventTime,ticketPrice,ticketsTotal,ticketsSold });
+        const newEvent = await createEventService({ 
+  eventTitle, 
+  description, 
+  venueId, 
+  category, 
+  eventDate: eventDateObj, 
+  eventTime, 
+  ticketPrice, 
+  ticketsTotal, 
+  ticketsSold,
+  eventImageUrl 
+});
         if (newEvent == null) {
             res.status(500).json({ message: "Failed to create Event" });
         } else {

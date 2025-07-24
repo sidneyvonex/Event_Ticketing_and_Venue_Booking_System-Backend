@@ -17,6 +17,10 @@ export const userTable =pgTable("userTable",{
     contactPhone:varchar("contactPhone", { length: 15 }).notNull(),
     address:varchar("address", { length: 255 }).notNull(),
     userRole:roleEnum("userRole").notNull().default("user"),
+    resetToken:varchar("resetToken", { length: 255 }),
+    resetTokenExpiry:timestamp("resetTokenExpiry", { withTimezone: true }),
+    verificationToken:varchar("verificationToken", { length: 255 }),
+    verificationTokenExpiry:timestamp("verificationTokenExpiry", { withTimezone: true }),
     createdAt:timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
     updatedAt:timestamp("updatedAt", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
 });
