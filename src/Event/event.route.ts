@@ -152,7 +152,7 @@ eventRouter.put('/events/:id',adminRoleAuth, updateEvent);
  */
 
 
-eventRouter.delete('/events/:id',adminRoleAuth, deleteEvent);
+eventRouter.delete('/events/:id', deleteEvent);
 
 /**
  * @swagger
