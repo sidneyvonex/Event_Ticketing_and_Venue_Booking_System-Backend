@@ -95,7 +95,6 @@ export const loginUser =async(req:Request,res:Response)=>{
             userId: existingUser.userId,
             email: existingUser.email,
             fullName: `${existingUser.firstName} ${existingUser.lastName}`,
-            profileUrl:existingUser.profilePicture,
             userRole: existingUser.userRole,
     
             //Expire
