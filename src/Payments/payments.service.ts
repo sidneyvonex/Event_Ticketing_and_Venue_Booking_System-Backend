@@ -9,11 +9,51 @@ export const getAllPaymentsService = async():Promise<TPaymentSelect[] | null> =>
         with:{
            booking:{
             columns:{
+                bookingId: true,
                 userId:true,
                 eventId:true,
+                quantity: true,
+                totalAmount: true,
                 bookingStatus:true,
+                createdAt: true,
+            },
+            with: {
+                user: {
+                    columns: {
+                        userId: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        contactPhone: true,
+                        profilePicture: true,
+                    }
+                },
+                event: {
+                    columns: {
+                        eventId: true,
+                        eventTitle: true,
+                        description: true,
+                        eventImageUrl: true,
+                        category: true,
+                        eventDate: true,
+                        eventTime: true,
+                        ticketPrice: true,
+                        ticketsTotal: true,
+                        ticketsSold: true,
+                    },
+                    with: {
+                        venue: {
+                            columns: {
+                                venueId: true,
+                                venueName: true,
+                                venueAddress: true,
+                                venueCapacity: true,
+                            }
+                        }
+                    }
+                }
             }
-           } 
+           },
         },
         orderBy:[desc(paymentsTable.paymentId)]
     })
