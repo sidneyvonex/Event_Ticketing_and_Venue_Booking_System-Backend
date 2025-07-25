@@ -81,17 +81,31 @@ export const updatePayment = async(req:Request,res:Response)=>{
         res.status(400).json({message:"Invalid Payment Id"})
         return; // Added missing return statement
     }
-    const { bookingId,amount,paymentStatus,paymentDate,paymentMethod,transactionId } = req.body
-    if(!bookingId||!amount||!paymentStatus||!paymentDate||!paymentMethod||!transactionId){
-        res.status(400).json({message:"All Fields are Required"})
-        return; // Added missing return statement
+    
+    const { bookingId, amount, paymentStatus, paymentDate, paymentMethod, transactionId } = req.body
+    
+    // Check if at least one field is provided for update
+    if(!bookingId && !amount && !paymentStatus && !paymentDate && !paymentMethod && !transactionId){
+        res.status(400).json({message:"At least one field is required for update"})
+        return;
     }
+
     try{
-        const updatedPayment = await updatePaymentService(paymentId,{bookingId,amount,paymentStatus,paymentDate,paymentMethod,transactionId});
+        // Build the update object with only provided fields
+        const updateData: any = {};
+        
+        if(bookingId !== undefined) updateData.bookingId = bookingId;
+        if(amount !== undefined) updateData.amount = amount;
+        if(paymentStatus !== undefined) updateData.paymentStatus = paymentStatus;
+        if(paymentDate !== undefined) updateData.paymentDate = new Date(paymentDate);
+        if(paymentMethod !== undefined) updateData.paymentMethod = paymentMethod;
+        if(transactionId !== undefined) updateData.transactionId = transactionId;
+
+        const updatedPayment = await updatePaymentService(paymentId, updateData);
         if(updatedPayment == null){
             res.status(404).json({message:"Payment Not Found"})
         }else{
-            res.status(200).json(updatedPayment)
+            res.status(200).json({message: updatedPayment})
         }
         
     }catch(error:any){

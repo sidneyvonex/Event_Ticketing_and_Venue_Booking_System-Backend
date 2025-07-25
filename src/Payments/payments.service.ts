@@ -104,7 +104,7 @@ export const createPaymentService = async(payment:TPaymentInsert):Promise<string
     return "Your Payment has been Created Successfully"
 }
 
-export const updatePaymentService = async(paymentId:number,payment:TPaymentInsert):Promise<string> =>{
+export const updatePaymentService = async(paymentId:number,payment:Partial<TPaymentInsert>):Promise<string> =>{
     await db.update(paymentsTable).set(payment).where(eq(paymentsTable.paymentId,paymentId))
     return "Your Payment has been updated Successfully"
 }
