@@ -17,4 +17,4 @@ paymentRouter.post('/payments',createPayment);
 
 paymentRouter.put('/payments/:id',updatePayment);
 
-paymentRouter.delete('payments/:id',deletePayment);
+paymentRouter.delete('/payments/:id',deletePayment);

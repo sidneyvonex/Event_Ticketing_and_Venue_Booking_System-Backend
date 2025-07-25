@@ -1,5 +1,16 @@
 import { Request, Response } from "express"
-import {getAllSupportTicketsService,getSupportTicketByIdService,getSupportTicketsByUserIdService,createSupportTicketService,updateSupportTicketService,deleteSupportTicketService} from "./support.service"
+import {
+    getAllSupportTicketsService,
+    getSupportTicketByIdService,
+    getSupportTicketsByUserIdService,
+    createSupportTicketService,
+    updateSupportTicketService,
+    deleteSupportTicketService,
+    // Response services
+    createSupportTicketResponseService,
+    getSupportTicketResponsesService,
+    getSupportTicketWithResponsesService
+} from "./support.service"
 import { ticketValidator } from "../Validation/supportTicketValidator";
 
 
@@ -121,5 +132,76 @@ export const deleteSupportTicket = async(req:Request,res:Response) =>{
         }
     }catch(error:any){
         res.status(500).json({error:error.message || "Failed to delete Support Ticket"})
+    }
+}
+
+// ========== SUPPORT TICKET RESPONSES CONTROLLERS ==========
+
+// Add response to a support ticket - POST /tickets/:ticketId/responses
+export const addSupportTicketResponse = async(req: Request, res: Response) => {
+    const ticketId = parseInt(req.params.ticketId);
+    if(isNaN(ticketId)){
+        res.status(400).json({message: "Invalid Ticket ID"});
+        return;
+    }
+
+    const { responderId, responderType, message } = req.body;
+    
+    if(!responderId || !responderType || !message){
+        res.status(400).json({message: "Responder ID, responder type, and message are required"});
+        return;
+    }
+
+    try{
+        const newResponse = await createSupportTicketResponseService({
+            ticketId,
+            responderId,
+            responderType,
+            message
+        });
+        
+        res.status(201).json({message: newResponse});
+    }catch(error: any){
+        res.status(500).json({error: error.message || "Failed to add response to support ticket"});
+    }
+}
+
+// Get all responses for a specific ticket - GET /tickets/:ticketId/responses
+export const getSupportTicketResponses = async(req: Request, res: Response) => {
+    const ticketId = parseInt(req.params.ticketId);
+    if(isNaN(ticketId)){
+        res.status(400).json({message: "Invalid Ticket ID"});
+        return;
+    }
+
+    try{
+        const responses = await getSupportTicketResponsesService(ticketId);
+        if(responses == null || responses.length === 0){
+            res.status(404).json({message: "No responses found for this ticket"});
+        }else{
+            res.status(200).json(responses);
+        }
+    }catch(error: any){
+        res.status(500).json({error: error.message || "Failed to fetch ticket responses"});
+    }
+}
+
+// Get a specific ticket with all its responses - GET /tickets/:ticketId/with-responses
+export const getSupportTicketWithResponses = async(req: Request, res: Response) => {
+    const ticketId = parseInt(req.params.ticketId);
+    if(isNaN(ticketId)){
+        res.status(400).json({message: "Invalid Ticket ID"});
+        return;
+    }
+
+    try{
+        const ticketWithResponses = await getSupportTicketWithResponsesService(ticketId);
+        if(ticketWithResponses == undefined){
+            res.status(404).json({message: "Ticket not found"});
+        }else{
+            res.status(200).json(ticketWithResponses);
+        }
+    }catch(error: any){
+        res.status(500).json({error: error.message || "Failed to fetch ticket with responses"});
     }
 }

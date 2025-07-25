@@ -101,6 +101,18 @@ export const supportTicketTable = pgTable("supportTicketTable", {
     createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updatedAt", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
   });
+
+
+  //12. Support Ticket Replies
+  export const supportTicketRepliesTable = pgTable("supportTicketRepliesTable",{
+    responseId:serial("responseId").primaryKey(),
+    ticketId:integer("ticketId").notNull().references(()=> supportTicketTable.ticketId, { onDelete: "cascade" }),
+    responderId:integer("responderId").notNull().references(()=> userTable.userId),
+    responderType:roleEnum("responderType").notNull().default("user"), // 'user' or 'admin'
+    message:text("message").notNull(),
+    createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
+  })
   
 
 
@@ -130,12 +142,17 @@ export type TPaymentSelect = typeof paymentsTable.$inferSelect;
 export type TSupportTicketInsert = typeof supportTicketTable.$inferInsert;
 export type TSupportTicketSelect = typeof supportTicketTable.$inferSelect;
 
+// 7. Support Ticket Replies
+export type TSupportTicketReplyInsert = typeof supportTicketRepliesTable.$inferInsert;
+export type TSupportTicketReplySelect = typeof supportTicketRepliesTable.$inferSelect;
+
 
 //Table Relations
-// User ↔ Bookings, Payments, Support Tickets
+// User ↔ Bookings, Payments, Support Tickets, Support Ticket Replies
 export const userRelations = relations(userTable, ({ many }) => ({
     bookings: many(bookingTable),
     supportTickets: many(supportTicketTable),
+    supportTicketReplies: many(supportTicketRepliesTable),
   }));
   
   // Venue ↔ Events
@@ -173,10 +190,23 @@ export const userRelations = relations(userTable, ({ many }) => ({
     }),
   }));
   
-  // Support Ticket ↔ User
-  export const supportTicketRelations = relations(supportTicketTable, ({ one }) => ({
+  // Support Ticket ↔ User, Support Ticket Replies
+  export const supportTicketRelations = relations(supportTicketTable, ({ one, many }) => ({
     user: one(userTable, {
       fields: [supportTicketTable.userId],
+      references: [userTable.userId],
+    }),
+    responses: many(supportTicketRepliesTable),
+  }));
+
+  // Support Ticket Reply ↔ Support Ticket, User (responder)
+  export const supportTicketReplyRelations = relations(supportTicketRepliesTable, ({ one }) => ({
+    ticket: one(supportTicketTable, {
+      fields: [supportTicketRepliesTable.ticketId],
+      references: [supportTicketTable.ticketId],
+    }),
+    responder: one(userTable, {
+      fields: [supportTicketRepliesTable.responderId],
       references: [userTable.userId],
     }),
   }));
