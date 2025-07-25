@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import {getAllPaymentsService,getPaymentByIdService,createPaymentService,updatePaymentService,deletePaymentService, getPaymentsForOneUser} from "./payments.service"
+import { TPaymentInsert } from "../drizzle/schema";
 import { parse } from "path";
 
 export const getAllPayments = async(req:Request,res:Response) =>{
@@ -92,7 +93,7 @@ export const updatePayment = async(req:Request,res:Response)=>{
 
     try{
         // Build the update object with only provided fields
-        const updateData: any = {};
+        const updateData: Partial<TPaymentInsert> = {};
         
         if(bookingId !== undefined) updateData.bookingId = bookingId;
         if(amount !== undefined) updateData.amount = amount;
