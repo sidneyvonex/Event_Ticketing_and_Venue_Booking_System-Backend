@@ -44,9 +44,34 @@ export const createSupportTicketService = async(supportTicket:TSupportTicketInse
     return "Your Support Ticket has been created successfully"
 }
 
-export const updateSupportTicketService = async(supportTicketId:number,supportTicket:TSupportTicketInsert):Promise<string> => {
-    await db.update(supportTicketTable).set(supportTicket).where(eq(supportTicketTable.ticketId,supportTicketId))
-    return "Support Ticket Updated Successfully"
+export const updateSupportTicketService = async(ticketId: number, updateData: Partial<TSupportTicketInsert>) => {
+    await db.update(supportTicketTable).set(updateData).where(eq(supportTicketTable.ticketId, ticketId));
+    // Return the updated ticket with user and responses (with responder details)
+    const updatedTicket = await db.query.supportTicketTable.findFirst({
+        where: eq(supportTicketTable.ticketId, ticketId),
+        with: {
+            user: {
+                columns: {
+                    firstName: true,
+                    lastName: true,
+                    email: true
+                }
+            },
+            responses: {
+                with: {
+                    responder: {
+                        columns: {
+                            firstName: true,
+                            lastName: true,
+                            email: true
+                        }
+                    }
+                },
+                orderBy: [desc(supportTicketRepliesTable.createdAt)]
+            }
+        }
+    });
+    return updatedTicket;
 }
 
 export const deleteSupportTicketService = async(supportTicketId:number):Promise<string> =>{
@@ -57,9 +82,24 @@ export const deleteSupportTicketService = async(supportTicketId:number):Promise<
 // ========== SUPPORT TICKET RESPONSES SERVICES ==========
 
 // Create a new response to a support ticket
-export const createSupportTicketResponseService = async(ticketResponse: TSupportTicketReplyInsert): Promise<string> => {
-    await db.insert(supportTicketRepliesTable).values(ticketResponse).returning();
-    return "Support ticket response added successfully";
+export const createSupportTicketResponseService = async(responseData: TSupportTicketReplyInsert) => {
+    // Insert the new response
+    const [inserted] = await db.insert(supportTicketRepliesTable).values(responseData).returning();
+    if (!inserted) return null;
+    // Return the new response with responder details
+    const newResponse = await db.query.supportTicketRepliesTable.findFirst({
+        where: eq(supportTicketRepliesTable.responseId, inserted.responseId),
+        with: {
+            responder: {
+                columns: {
+                    firstName: true,
+                    lastName: true,
+                    email: true
+                }
+            }
+        }
+    });
+    return newResponse;
 }
 
 // Get all responses for a specific ticket

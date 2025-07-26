@@ -92,25 +92,38 @@ export const createSupportTicket = async(req:Request,res:Response) =>{
 export const updateSupportTicket = async(req:Request,res:Response) =>{
     const supportTicketId = parseInt(req.params.id)
     if(isNaN(supportTicketId)){
-        res.status(500).json({message:"Invalid Ticket Id"})
+        res.status(400).json({message:"Invalid Ticket Id"})
         return;
     }
-    const {userId,subject,description,category,supportTicketStatus} = req.body
-    if(!userId||!subject||!description||!supportTicketStatus){
-        res.status(400).json({message:"All fields are Required"})
+    
+    // Only require supportTicketStatus for status updates
+    const {supportTicketStatus} = req.body
+    if(!supportTicketStatus){
+        res.status(400).json({message:"Support ticket status is required"})
         return;
     }
+    
     try{
-        const parseResult = ticketValidator.safeParse(req.body)
-        if(!parseResult.success){
-            res.status(400).json({error:parseResult.error.issues})
+        // Get the existing ticket first
+        const existingTicket = await getSupportTicketByIdService(supportTicketId);
+        if(!existingTicket){
+            res.status(404).json({message:"Support Ticket Not Found"})
             return;
-        } 
-        const updatedSupportTicket = await updateSupportTicketService(supportTicketId,{userId,subject,description,category,supportTicketStatus});
+        }
+        
+        // Update only the status, keep other fields unchanged
+        const updatedSupportTicket = await updateSupportTicketService(supportTicketId,{
+            userId: existingTicket.userId,
+            subject: existingTicket.subject,
+            description: existingTicket.description,
+            category: existingTicket.category,
+            supportTicketStatus
+        });
+        
         if(updatedSupportTicket == null){
             res.status(404).json({message:"Support Ticket Not Found"})
         }else{
-            res.status(200).json({message:updatedSupportTicket})
+            res.status(200).json(updatedSupportTicket)
         }
     }catch(error:any){
         res.status(500).json({error:error.message || "Failed to Update Support Ticket"})
@@ -153,6 +166,13 @@ export const addSupportTicketResponse = async(req: Request, res: Response) => {
     }
 
     try{
+        // Verify the ticket exists
+        const existingTicket = await getSupportTicketByIdService(ticketId);
+        if(!existingTicket){
+            res.status(404).json({message: "Support ticket not found"});
+            return;
+        }
+
         const newResponse = await createSupportTicketResponseService({
             ticketId,
             responderId,
@@ -160,7 +180,11 @@ export const addSupportTicketResponse = async(req: Request, res: Response) => {
             message
         });
         
-        res.status(201).json({message: newResponse});
+        if(newResponse){
+            res.status(201).json(newResponse);
+        }else{
+            res.status(500).json({message: "Failed to create response"});
+        }
     }catch(error: any){
         res.status(500).json({error: error.message || "Failed to add response to support ticket"});
     }
