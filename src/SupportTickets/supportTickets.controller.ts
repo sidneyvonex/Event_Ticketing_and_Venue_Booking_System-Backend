@@ -95,14 +95,12 @@ export const updateSupportTicket = async(req:Request,res:Response) =>{
         res.status(400).json({message:"Invalid Ticket Id"})
         return;
     }
-    
     // Only require supportTicketStatus for status updates
     const {supportTicketStatus} = req.body
     if(!supportTicketStatus){
         res.status(400).json({message:"Support ticket status is required"})
         return;
     }
-    
     try{
         // Get the existing ticket first
         const existingTicket = await getSupportTicketByIdService(supportTicketId);
@@ -110,7 +108,6 @@ export const updateSupportTicket = async(req:Request,res:Response) =>{
             res.status(404).json({message:"Support Ticket Not Found"})
             return;
         }
-        
         // Update only the status, keep other fields unchanged
         const updatedSupportTicket = await updateSupportTicketService(supportTicketId,{
             userId: existingTicket.userId,
@@ -119,7 +116,6 @@ export const updateSupportTicket = async(req:Request,res:Response) =>{
             category: existingTicket.category,
             supportTicketStatus
         });
-        
         if(updatedSupportTicket == null){
             res.status(404).json({message:"Support Ticket Not Found"})
         }else{
@@ -157,14 +153,11 @@ export const addSupportTicketResponse = async(req: Request, res: Response) => {
         res.status(400).json({message: "Invalid Ticket ID"});
         return;
     }
-
     const { responderId, responderType, message } = req.body;
-    
     if(!responderId || !responderType || !message){
         res.status(400).json({message: "Responder ID, responder type, and message are required"});
         return;
     }
-
     try{
         // Verify the ticket exists
         const existingTicket = await getSupportTicketByIdService(ticketId);
@@ -172,14 +165,12 @@ export const addSupportTicketResponse = async(req: Request, res: Response) => {
             res.status(404).json({message: "Support ticket not found"});
             return;
         }
-
         const newResponse = await createSupportTicketResponseService({
             ticketId,
             responderId,
             responderType,
             message
         });
-        
         if(newResponse){
             res.status(201).json(newResponse);
         }else{
