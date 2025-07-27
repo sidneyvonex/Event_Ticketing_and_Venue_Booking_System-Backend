@@ -99,6 +99,11 @@ export const getPaymentsForOneUser = async(userId:number):Promise<TPaymentSelect
 )
 }
 
+
+
+
+
+
 export const createPaymentService = async(payment:TPaymentInsert):Promise<string> =>{
     await db.insert(paymentsTable).values(payment).returning();
     return "Your Payment has been Created Successfully"
