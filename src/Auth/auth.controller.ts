@@ -379,7 +379,7 @@ export const resendVerificationCode = async (req: Request, res: Response) => {
         await storeEmailVerificationTokenService(user.userId, verificationToken, verificationTokenExpiry);
 
         // Create verification URL
-        const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000/api/auth'}/verify-email?token=${verificationToken}`;
+        const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
 
         // Send verification email
         await sendAccountVerificationEmail({

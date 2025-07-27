@@ -13,7 +13,7 @@ import { adminRoleAuth,bothRoleAuth,memberRoleAuth } from "../Middleware/bearAut
 
 export const authRouter = Router();
 
-authRouter.post('/auth/register',memberRoleAuth,createUser)
+authRouter.post('/auth/register',createUser)
 
 //Swagger documentation for POST
 /**
@@ -89,7 +89,7 @@ authRouter.post('/auth/login',loginUser);
  */
 
 // Admin Create User Account
-authRouter.post('/auth/admin/create-user', adminRoleAuth, adminCreateUser);
+authRouter.post('/auth/admin/create-user', adminCreateUser);
 /**
  * @swagger
  * /auth/admin/create-user:
