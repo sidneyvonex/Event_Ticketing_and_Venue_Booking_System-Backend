@@ -192,7 +192,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
         await storePasswordResetTokenService(email, resetToken, resetTokenExpiry);
 
         // Create reset URL
-        const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000/api/auth'}/reset-password?token=${resetToken}`;
+        const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
         // Send password reset email
         await sendPasswordResetEmail({

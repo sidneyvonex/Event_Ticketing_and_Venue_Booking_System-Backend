@@ -117,7 +117,7 @@ authRouter.post('/auth/admin/create-user', adminRoleAuth, adminCreateUser);
  */
 
 // Forgot Password
-authRouter.post('/auth/forgot-password',bothRoleAuth, forgotPassword);
+authRouter.post('/auth/forgot-password', forgotPassword);
 /**
  * @swagger
  * /auth/forgot-password:
@@ -150,7 +150,7 @@ authRouter.post('/auth/forgot-password',bothRoleAuth, forgotPassword);
  */
 
 // Reset Password
-authRouter.post('/auth/reset-password',bothRoleAuth, resetPassword);
+authRouter.post('/auth/reset-password', resetPassword);
 /**
  * @swagger
  * /auth/reset-password:
@@ -185,7 +185,7 @@ authRouter.post('/auth/reset-password',bothRoleAuth, resetPassword);
  */
 
 // Send Email Verification
-authRouter.post('/auth/send-verification',bothRoleAuth, sendEmailVerification);
+authRouter.post('/auth/send-verification', sendEmailVerification);
 /**
  * @swagger
  * /auth/send-verification:
@@ -218,7 +218,7 @@ authRouter.post('/auth/send-verification',bothRoleAuth, sendEmailVerification);
  */
 
 // Verify Email
-authRouter.post('/auth/verify-email',bothRoleAuth, verifyEmail);
+authRouter.post('/auth/verify-email', verifyEmail);
 /**
  * @swagger
  * /auth/verify-email:
@@ -248,7 +248,7 @@ authRouter.post('/auth/verify-email',bothRoleAuth, verifyEmail);
  */
 
 // Resend Verification Code
-authRouter.post('/auth/resend-verification',bothRoleAuth, resendVerificationCode);
+authRouter.post('/auth/resend-verification', resendVerificationCode);
 /**
  * @swagger
  * /auth/resend-verification:
