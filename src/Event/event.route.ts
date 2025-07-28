@@ -82,7 +82,7 @@ eventRouter.post('/events', createEvent);
  *         description: Event added successfully
  */
 
-eventRouter.put('/events/:id',adminRoleAuth, updateEvent);
+eventRouter.put('/events/:id', updateEvent);
 
 /**
  * @swagger
