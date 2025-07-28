@@ -78,6 +78,14 @@ export const paymentsTable = pgTable("paymentsTable", {
     paymentDate: timestamp("paymentDate", { withTimezone: true }).notNull().defaultNow(),
     paymentMethod: varchar("paymentMethod", { length: 50 }),
     transactionId: varchar("transactionId", { length: 255 }),
+    // --- M-Pesa specific fields ---
+    phoneNumber: varchar("phoneNumber", { length: 20 }), // M-Pesa phone number
+    mpesaReceiptNumber: varchar("mpesaReceiptNumber", { length: 50 }), // M-Pesa receipt code
+    checkoutRequestID: varchar("checkoutRequestID", { length: 255 }), // STK Push request ID
+    merchantRequestID: varchar("merchantRequestID", { length: 255 }), // Optional, for tracking
+    productName: varchar("productName", { length: 100 }), // What the payment is for
+    transactionType: varchar("transactionType", { length: 50 }), // e.g. CustomerPayBillOnline
+    // --- end M-Pesa fields ---
     createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updatedAt", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
 });
@@ -210,4 +218,4 @@ export const userRelations = relations(userTable, ({ many }) => ({
       references: [userTable.userId],
     }),
   }));
-  
+

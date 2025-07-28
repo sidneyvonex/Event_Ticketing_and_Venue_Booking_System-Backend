@@ -85,6 +85,13 @@
       "when": 1753451588149,
       "tag": "0011_easy_micromax",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1753688734808,
+      "tag": "0012_old_captain_stacy",
+      "breakpoints": true
     }
   ]
 }

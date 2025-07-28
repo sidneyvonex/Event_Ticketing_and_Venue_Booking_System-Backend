@@ -12,6 +12,7 @@ import { eventRouter } from './Event/event.route';
 import { bookingsRouter } from './Bookings/bookings.route';
 import { paymentRouter } from './Payments/payment.route';
 import { supportTicketRouter } from './SupportTickets/supportTickets.route';
+import { mpesaCallback } from "./mpesa/mpesaCallback.controller";
 
 const app:Application =express();
 
@@ -43,6 +44,9 @@ app.use('/api',eventRouter); // Event routes
 app.use('/api',bookingsRouter);//Bookings routes
 app.use('/api',paymentRouter); // Payment routes
 app.use('/api',supportTicketRouter)//Support Ticket Routes
+
+// Register M-Pesa callback route
+app.post("/api/mpesa/callback", mpesaCallback)
 
 
 export default app;
