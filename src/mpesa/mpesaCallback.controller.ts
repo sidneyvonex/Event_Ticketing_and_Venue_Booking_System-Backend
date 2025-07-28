@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import db from "../drizzle/db";
 import { paymentsTable, bookingTable } from "../drizzle/schema";
+import { getBookingByIdService } from "../Bookings/booking.service";
+import { getUserByIdServices } from "../User/user.service";
+import { getEventByIdService } from "../Event/event.service";
+import { sendBookingAndPaymentConfirmation } from "../emails";
+import { getVenueByIdService } from "../Venue/venue.service";
 import { eq } from "drizzle-orm";
 
 export const mpesaCallback = async (req: Request, res: Response): Promise<void> => {
@@ -48,11 +53,53 @@ export const mpesaCallback = async (req: Request, res: Response): Promise<void> 
       bookingId = payment.bookingId;
     }
 
-    // If payment is completed, update booking status to Confirmed
+
+    // If payment is completed, update booking status to Confirmed and send email
     if (transactionStatus === "Completed" && bookingId) {
       await db.update(bookingTable)
         .set({ bookingStatus: "Confirmed" })
         .where(eq(bookingTable.bookingId, bookingId));
+
+      // Fetch booking, user, and event details
+      const booking = await getBookingByIdService(bookingId);
+      if (booking) {
+        const user = await getUserByIdServices(booking.userId);
+        const event = await getEventByIdService(booking.eventId);
+        let venueName = '';
+        if (event && event.venueId) {
+          const venue = await getVenueByIdService(event.venueId);
+          if (venue && venue.venueName) {
+            venueName = venue.venueName;
+          }
+        }
+        // Ensure totalAmount is a number
+        let totalAmount: number = 0;
+        if (typeof booking.totalAmount === 'string') {
+          totalAmount = parseFloat(booking.totalAmount);
+        } else if (typeof booking.totalAmount === 'number') {
+          totalAmount = booking.totalAmount;
+        }
+        if (user && event) {
+          await sendBookingAndPaymentConfirmation(
+            {
+              recipientEmail: user.email,
+              recipientName: user.firstName,
+              role: 'user',
+            },
+            {
+              eventTitle: event.eventTitle,
+              venueName,
+              eventDate: event.eventDate ? new Date(event.eventDate).toLocaleDateString() : '',
+              eventTime: event.eventTime || '',
+              quantity: booking.quantity,
+              totalAmount,
+              bookingId: booking.bookingId,
+              paymentMethod: payment.paymentMethod ? payment.paymentMethod : 'M-Pesa',
+              transactionId: payment.mpesaReceiptNumber ? payment.mpesaReceiptNumber : (payment.transactionId || ''),
+            }
+          );
+        }
+      }
     }
 
     res.json({ success: true, status: transactionStatus });

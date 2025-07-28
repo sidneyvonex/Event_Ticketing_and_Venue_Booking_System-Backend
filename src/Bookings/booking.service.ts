@@ -67,10 +67,32 @@ export const getAllBookingsForOneUserService= async(userId:number):Promise<TBook
 
 //Get Booking by Id
 
-export const getBookingByIdService =async(bookingId:number):Promise<TBookingSelect | undefined> =>{
+export const getBookingByIdService = async (bookingId: number): Promise<TBookingSelect | undefined> => {
     return await db.query.bookingTable.findFirst({
-        where:eq(bookingTable.bookingId,bookingId)
-    })
+        where: eq(bookingTable.bookingId, bookingId),
+        with: {
+            event: {
+                columns: {
+                    eventTitle: true,
+                    eventDate: true,
+                    eventTime: true,
+                    ticketsTotal: true,
+                    ticketPrice: true,
+                },
+                with: {
+                    venue: true // include full venue object
+                }
+            },
+            user: {
+                columns: {
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                }
+            },
+            payments: true
+        }
+    });
 }
 
 //Create a new Booking

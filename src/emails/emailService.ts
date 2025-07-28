@@ -1,3 +1,41 @@
+// Send Booking & Payment Confirmation Email (with download ticket message)
+export async function sendBookingAndPaymentConfirmation(
+  emailData: EmailData,
+  details: {
+    eventTitle: string;
+    venueName: string;
+    eventDate: string;
+    eventTime: string;
+    quantity: number;
+    totalAmount: number;
+    bookingId: number;
+    paymentMethod: string;
+    transactionId: string;
+  }
+): Promise<string> {
+  const template = EmailTemplates.getBookingAndPaymentEmail(
+    emailData.recipientName,
+    emailData.recipientEmail,
+    details.eventTitle,
+    details.venueName,
+    details.eventDate,
+    details.eventTime,
+    details.quantity,
+    details.totalAmount,
+    details.bookingId,
+    details.paymentMethod,
+    details.transactionId
+  );
+  return await sendEventEmail(
+    emailData.recipientEmail,
+    emailData.recipientName,
+    template.subject,
+    template.body,
+    emailData.role || 'user',
+    'booking_confirmation' // Use a valid EmailType
+  );
+}
+  // ...existing code...
 // Email Service - Dynamic Email Sending with Templates
 import { sendEventEmail, EmailType } from '../Middleware/googleMailer';
 import * as EmailTemplates from './emailTemplates';

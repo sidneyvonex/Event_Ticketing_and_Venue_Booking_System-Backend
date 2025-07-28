@@ -310,3 +310,49 @@ export const getEmailVerificationSuccessEmail = (
     `,
   };
 };
+
+// Booking & Payment Confirmation Email (with download ticket message)
+export const getBookingAndPaymentEmail = (
+  name: string,
+  email: string,
+  eventTitle: string,
+  venueName: string,
+  eventDate: string,
+  eventTime: string,
+  quantity: number,
+  totalAmount: number,
+  bookingId: number,
+  paymentMethod: string,
+  transactionId: string
+): EmailTemplate => {
+  return {
+    subject: `Your Booking & Payment Confirmed: ${eventTitle}`,
+    body: `
+      <p>Dear ${name},</p>
+      <h3>Your booking and payment have been confirmed!</h3>
+      <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h4 style="color: #6366f1; margin-top: 0;">Event Details:</h4>
+        <p><strong>Event:</strong> ${eventTitle}</p>
+        <p><strong>Venue:</strong> ${venueName}</p>
+        <p><strong>Date:</strong> ${eventDate}</p>
+        <p><strong>Time:</strong> ${eventTime}</p>
+        <p><strong>Tickets:</strong> ${quantity}</p>
+        <p><strong>Total Amount:</strong> KSh ${totalAmount}</p>
+        <p><strong>Booking ID:</strong> #${bookingId}</p>
+      </div>
+      <div style="background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0ea5e9;">
+        <h4 style="color: #0ea5e9; margin-top: 0;">Payment Details:</h4>
+        <p><strong>Amount Paid:</strong> KSh ${totalAmount}</p>
+        <p><strong>Payment Method:</strong> ${paymentMethod}</p>
+        <p><strong>Transaction ID:</strong> ${transactionId}</p>
+        <p><strong>Payment Date:</strong> ${new Date().toLocaleDateString()}</p>
+      </div>
+      <div style="background-color: #d1fae5; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
+        <h4 style="color: #047857; margin-top: 0;">Download Your Ticket</h4>
+        <p>You can now download your ticket in the TicKenya app. Open the app, go to 'My Bookings', and download your digital ticket for entry to the event.</p>
+      </div>
+      <p><strong>Important:</strong> Please save this email as your booking confirmation. Present your booking ID at the venue entrance.</p>
+      <p>Thank you for choosing TicKenya. We look forward to seeing you at the event!</p>
+    `,
+  };
+};

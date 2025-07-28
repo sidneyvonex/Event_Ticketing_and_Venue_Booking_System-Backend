@@ -1,3 +1,4 @@
+export { sendBookingAndPaymentConfirmation } from './emailService';
 // Email Module - Main Export File
 export * from './emailTemplates';
 export * from './emailService';
