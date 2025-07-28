@@ -81,42 +81,38 @@ export const updateBooking = async(req:Request,res:Response) =>{
     const bookingId = parseInt(req.params.id);
     if(isNaN(bookingId)){
         res.status(400).json({error:"Invalid Booking ID"})
-        return; // Prevent further execution
+        return;
     }
-    
-    // Extract fields from request body (any combination is allowed)
-    const {userId,eventId,quantity,totalAmount,bookingStatus} = req.body;
-    
-    // Check if at least one field is provided for update
-    if(!userId && !eventId && !quantity && !totalAmount && !bookingStatus){
+
+    // Accept any fields for update
+    const updateData = { ...req.body };
+    // Remove id fields if present in body to prevent accidental overwrite
+    delete updateData.id;
+    delete updateData.bookingId;
+
+    // If no fields provided
+    if(Object.keys(updateData).length === 0){
         res.status(400).json({error:"At least one field is required for update"})
-        return; // Prevent further execution
+        return;
     }
-    
+
     try{
-        // Only validate provided fields
-        const updateData: Partial<TBookingInsert> = {};
-        if(userId !== undefined) updateData.userId = userId;
-        if(eventId !== undefined) updateData.eventId = eventId;
-        if(quantity !== undefined) updateData.quantity = quantity;
-        if(totalAmount !== undefined) updateData.totalAmount = totalAmount;
-        if(bookingStatus !== undefined) updateData.bookingStatus = bookingStatus;
-        
-        const parseResult = bookingValidator.partial().safeParse(updateData)
+        // Validate only provided fields
+        const parseResult = bookingValidator.partial().safeParse(updateData);
         if(!parseResult.success){
             res.status(400).json({error:parseResult.error.issues})
             return;
-        } 
-        
+        }
+
         const updatedBooking = await updateBookingService(bookingId, updateData);
         if(updatedBooking == null){
             res.status(404).json({message:"Booking not found or failed to update"});
         }else{
-                res.status(200).json({message:updatedBooking});
-            }
-        }catch(error:any){
-            res.status(500).json({error:error.message || "Failed to update Booking"})
+            res.status(200).json({message:updatedBooking});
         }
+    }catch(error:any){
+        res.status(500).json({error:error.message || "Failed to update Booking"})
+    }
 }
 
 export const deleteBooking = async(req:Request,res:Response) =>{
