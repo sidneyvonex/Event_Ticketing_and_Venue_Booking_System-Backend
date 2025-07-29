@@ -80,7 +80,6 @@ export const paymentsTable = pgTable("paymentsTable", {
     transactionId: varchar("transactionId", { length: 255 }),
     // --- M-Pesa specific fields ---
     phoneNumber: varchar("phoneNumber", { length: 20 }), // M-Pesa phone number
-    // mpesaReceiptNumber REMOVED
     checkoutRequestID: varchar("checkoutRequestID", { length: 255 }), // STK Push request ID
     merchantRequestID: varchar("merchantRequestID", { length: 255 }), // Optional, for tracking
     productName: varchar("productName", { length: 100 }), // What the payment is for
