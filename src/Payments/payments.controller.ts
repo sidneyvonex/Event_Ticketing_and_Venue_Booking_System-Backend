@@ -1,7 +1,10 @@
+import { getPaymentByCheckoutRequestID } from "./payments.service";
+
+
 import { Request, Response } from "express";
 import {getAllPaymentsService,getPaymentByIdService,createPaymentService,updatePaymentService,deletePaymentService, getPaymentsForOneUser} from "./payments.service"
 import { TPaymentInsert } from "../drizzle/schema";
-import { parse } from "path";
+
 
 export const getAllPayments = async(req:Request,res:Response) =>{
     try{
@@ -15,6 +18,29 @@ export const getAllPayments = async(req:Request,res:Response) =>{
         res.status(500).json({error:error.message || "Failed to fetch Payments"})
     }
 }
+
+// Controller for payment status polling by checkoutRequestID
+export const getPaymentStatusByCheckoutRequestID = async (req: Request, res: Response) => {
+    const { checkoutRequestID } = req.query;
+    if (!checkoutRequestID || typeof checkoutRequestID !== "string") {
+        res.status(400).json({ error: "Missing or invalid checkoutRequestID" });
+        return ;
+    }
+    try {
+        const payment = await getPaymentByCheckoutRequestID(checkoutRequestID);
+        if (!payment) {
+             res.status(404).json({ error: "Payment not found" });
+             return
+        }
+        res.json({
+            paymentStatus: payment.paymentStatus,
+            bookingId: payment.bookingId,
+        });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message || "Failed to fetch payment status" });
+    }
+};
+
 
 export const getPaymentById = async(req:Request,res:Response) => {
     const paymentId = parseInt(req.params.id)

@@ -1,3 +1,10 @@
+
+// Get payment by checkoutRequestID (for payment status polling)
+export const getPaymentByCheckoutRequestID = async (checkoutRequestID: string) => {
+    return await db.query.paymentsTable.findFirst({
+        where: eq(paymentsTable.checkoutRequestID, checkoutRequestID)
+    });
+}
 import db from "../drizzle/db"
 import { desc,eq } from "drizzle-orm"
 import { paymentsTable,TPaymentInsert,TPaymentSelect } from "../drizzle/schema"
