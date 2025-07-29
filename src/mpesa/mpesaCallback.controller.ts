@@ -24,14 +24,14 @@ export const mpesaCallback = async (req: Request, res: Response): Promise<void> 
     }
 
     const transactionStatus = ResultCode === 0 ? "Completed" : "Failed";
-    let mpesaReceiptNumber = "";
+    let transactionId = "";
     let phoneNumber = "";
     let amount = "";
     let bookingId: number | undefined = undefined;
 
     if (CallbackMetadata?.Item?.length) {
       for (const item of CallbackMetadata.Item) {
-        if (item.Name === "MpesaReceiptNumber") mpesaReceiptNumber = item.Value;
+        if (item.Name === "MpesaReceiptNumber") transactionId = item.Value;
         if (item.Name === "PhoneNumber") phoneNumber = String(item.Value);
         if (item.Name === "Amount") amount = String(item.Value);
       }
@@ -42,7 +42,7 @@ export const mpesaCallback = async (req: Request, res: Response): Promise<void> 
       .update(paymentsTable)
       .set({
         paymentStatus: transactionStatus,
-        mpesaReceiptNumber,
+        transactionId,
         phoneNumber,
         amount
       })
@@ -95,7 +95,7 @@ export const mpesaCallback = async (req: Request, res: Response): Promise<void> 
               totalAmount,
               bookingId: booking.bookingId,
               paymentMethod: payment.paymentMethod ? payment.paymentMethod : 'M-Pesa',
-              transactionId: payment.mpesaReceiptNumber ? payment.mpesaReceiptNumber : (payment.transactionId || ''),
+              transactionId: payment.transactionId || '',
             }
           );
         }
