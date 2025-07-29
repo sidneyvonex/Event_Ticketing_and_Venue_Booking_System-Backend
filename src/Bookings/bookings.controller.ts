@@ -1,7 +1,9 @@
 import {Request,Response} from "express"
 import {getAllBookingsService,getAllBookingsForOneUserService,getBookingByIdService,createBookingSevice,updateBookingService,deleteBookingService} from "./booking.service"
 import { bookingValidator } from "../Validation/bookingValidator";
-import { TBookingInsert } from "../drizzle/schema";
+import { eventTable, TBookingInsert } from "../drizzle/schema";
+import db from "../drizzle/db";
+import { eq, sql } from "drizzle-orm";
 
 export const getAllBookings = async(req:Request,res:Response) =>{
     try{
@@ -65,13 +67,17 @@ export const createBooking = async(req:Request,res:Response) =>{
         if(!parseResult.success){
             res.status(400).json({error:parseResult.error.issues})
             return;
-        } 
-        const newBooking = await  createBookingSevice({userId,eventId,quantity,totalAmount,bookingStatus});
+        }
+        const newBooking = await createBookingSevice({userId,eventId,quantity,totalAmount,bookingStatus});
         if(newBooking == null){
             res.status(500).json({message:"Failed to create Booking"})
-    }else{
-            res.status(201).json({message:newBooking});
+            return;
         }
+        // Increment ticketsSold for the event
+        await db.update(eventTable)
+            .set({ ticketsSold: sql`${eventTable.ticketsSold} + ${quantity}` })
+            .where(eq(eventTable.eventId, eventId));
+        res.status(201).json({message:newBooking});
     }catch(error:any){
         res.status(500).json({error:error.message || "Failed to create Booking"})
     }
