@@ -10,14 +10,19 @@ export const bookAndPayMpesa = async (req: Request, res: Response): Promise<void
   try {
     const { userId, eventId, quantity, phoneNumber } = req.body;
 
-    // Input validations
-    if (!userId || !eventId || !quantity || !phoneNumber) {
-      res.status(400).json({ error: "All fields are required." });
+    // Input validations with detailed error messages
+    const missingFields = [];
+    if (!userId) missingFields.push('userId');
+    if (!eventId) missingFields.push('eventId');
+    if (!quantity) missingFields.push('quantity');
+    if (!phoneNumber) missingFields.push('phoneNumber');
+    if (missingFields.length > 0) {
+      res.status(400).json({ error: `Missing required field(s): ${missingFields.join(', ')}`, received: req.body });
       return;
     }
 
-    if (!phoneNumber.startsWith("254")) {
-      res.status(400).json({ error: "Phone number must start with 254" });
+    if (typeof phoneNumber !== 'string' || !phoneNumber.startsWith("254")) {
+      res.status(400).json({ error: "Phone number must start with 254", received: phoneNumber });
       return;
     }
 
@@ -27,7 +32,7 @@ export const bookAndPayMpesa = async (req: Request, res: Response): Promise<void
     });
 
     if (!event) {
-      res.status(404).json({ error: "Event not found" });
+      res.status(404).json({ error: "Event not found", eventId });
       return;
     }
 
@@ -49,7 +54,7 @@ export const bookAndPayMpesa = async (req: Request, res: Response): Promise<void
     const initiateStkResponse = await stkPush(accessToken, phoneNumber, amount, productName);
     const checkoutRequestID = initiateStkResponse?.CheckoutRequestID;
     if (!checkoutRequestID) {
-      res.status(400).json({ error: "Failed to initiate M-Pesa payment" });
+      res.status(400).json({ error: "Failed to initiate M-Pesa payment", stkResponse: initiateStkResponse });
       return;
     }
 
@@ -72,7 +77,7 @@ export const bookAndPayMpesa = async (req: Request, res: Response): Promise<void
       checkoutRequestID,
     });
   } catch (error: any) {
-    res.status(500).json({ error: error.message || "Booking and payment failed" });
+    res.status(500).json({ error: error.message || "Booking and payment failed", stack: error.stack, received: req.body });
   }
 };
 
