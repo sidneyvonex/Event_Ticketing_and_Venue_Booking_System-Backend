@@ -73,11 +73,6 @@ export const createBooking = async(req:Request,res:Response) =>{
             res.status(500).json({message:"Failed to create Booking"})
             return;
         }
-        // Increment ticketsSold for the event
-        await db.update(eventTable)
-            .set({ ticketsSold: sql`${eventTable.ticketsSold} + ${quantity}` })
-            .where(eq(eventTable.eventId, eventId));
-        res.status(201).json({message:newBooking});
     }catch(error:any){
         res.status(500).json({error:error.message || "Failed to create Booking"})
     }

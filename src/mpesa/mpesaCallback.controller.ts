@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import db from "../drizzle/db";
-import { paymentsTable, bookingTable } from "../drizzle/schema";
+import { paymentsTable, bookingTable, eventTable } from "../drizzle/schema";
 import { getBookingByIdService } from "../Bookings/booking.service";
 import { getUserByIdServices } from "../User/user.service";
 import { getEventByIdService } from "../Event/event.service";
 import { sendBookingAndPaymentConfirmation } from "../emails";
 import { getVenueByIdService } from "../Venue/venue.service";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 export const mpesaCallback = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -56,13 +56,21 @@ export const mpesaCallback = async (req: Request, res: Response): Promise<void> 
 
     // If payment is completed, update booking status to Confirmed and send email
     if (transactionStatus === "Completed" && bookingId) {
-      await db.update(bookingTable)
-        .set({ bookingStatus: "Confirmed" })
-        .where(eq(bookingTable.bookingId, bookingId));
 
-      // Fetch booking, user, and event details
+      // Fetch booking, user, and event details first
       const booking = await getBookingByIdService(bookingId);
       if (booking) {
+        // Update booking status
+        await db.update(bookingTable)
+          .set({ bookingStatus: "Confirmed" })
+          .where(eq(bookingTable.bookingId, bookingId));
+
+        // Increment ticketsSold for the event
+        await db.update(eventTable)
+          .set({ ticketsSold: sql`${eventTable.ticketsSold} + ${booking.quantity}` })
+          .where(eq(eventTable.eventId, booking.eventId));
+
+        // Fetch user and event
         const user = await getUserByIdServices(booking.userId);
         const event = await getEventByIdService(booking.eventId);
         let venueName = '';
