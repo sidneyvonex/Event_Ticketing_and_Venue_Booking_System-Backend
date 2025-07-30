@@ -26,6 +26,7 @@ export const getPaymentStatusByCheckoutRequestID = async (req: Request, res: Res
         res.status(400).json({ error: "Missing or invalid checkoutRequestID" });
         return ;
     }
+    
     try {
         const payment = await getPaymentByCheckoutRequestID(checkoutRequestID);
         if (!payment) {
